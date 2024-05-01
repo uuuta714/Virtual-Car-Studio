@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Car Studio</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <a href="#" id="open-slideout">Open Slideout</a>
+    <div id="slideout" class="slideout">
+        <div class="slideout-header">
+          <h3>Slideout</h3>
+          <a href="#" id="close-slideout">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </a>
+        </div>
+        <p>
+            <select id="cameraSequenceDropdown">
+                <option value="">Select a Camera Sequence</option>
+                <!-- Options will be populated by JavaScript -->
+            </select>
+            <button id="addToSequenceButton">Add to Sequence</button>
+            <!-- List of Selected Camera Sequences -->
+            <ul id="selectedSequenceList"></ul>
+            <button id="resetSequenceButton">Reset Sequences</button>
+            <a href="#" id="start-camera-sequence">Record</a>
+        </p>
+    </div>
+    <script src="./js/scripts.js" type="module"></script>
+    <script src="./js/userInteractions.js" type="module"></script>
+</body>
+</html>
