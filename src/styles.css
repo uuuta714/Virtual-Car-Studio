@@ -4,13 +4,14 @@ body {
 
 .slideout {
     position: fixed;
-    left: -250px; /* Slideout width + a little extra */
+    left: -400px; /* Slideout width + a little extra */
     top: 0;
-    width: 250px;
+    width: 400px;
     height: 100%;
     background-color: white;
-    transition: left 0.3s;
+    transition: left 0.3s ease-in-out;
     z-index: 1000;
+    overflow-y: auto; /* Enable vertical scrolling */
 }
 
 .slideout.open {
@@ -22,3 +23,9 @@ body {
     background-color: #f1f1f1;
     border-bottom: 1px solid #ccc;
 }
+
+.canvas { 
+    display: inline-block;
+    display: inline-block;
+    margin: 0px 10px; }
+

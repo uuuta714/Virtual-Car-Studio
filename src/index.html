@@ -7,24 +7,90 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <a href="#" id="open-slideout">Open Slideout</a>
+    <a href="#" id="open-slideout">&lt;&lt;&lt;</a>
     <div id="slideout" class="slideout">
         <div class="slideout-header">
-          <h3>Slideout</h3>
+          <h3>Create Custom Video</h3>
           <a href="#" id="close-slideout">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </a>
         </div>
         <p>
-            <select id="cameraSequenceDropdown">
-                <option value="">Select a Camera Sequence</option>
-                <!-- Options will be populated by JavaScript -->
-            </select>
-            <button id="addToSequenceButton">Add to Sequence</button>
-            <!-- List of Selected Camera Sequences -->
-            <ul id="selectedSequenceList"></ul>
-            <button id="resetSequenceButton">Reset Sequences</button>
-            <a href="#" id="start-camera-sequence">Record</a>
+            <!-- Create custom camera movement -->
+            <h3>Create Custom Camera Movement</h3>
+
+                <!-- Label and Input to set name of camera movement -->
+                <label for="cameraMovementName">Name:</label>
+                <input type="text" id="cameraMovementName" name="cameraMovementName"><br><br>
+
+                <!-- Label and Input to set duration -->
+                <label for="duration">Duration (sec):</label>
+                <input type="number" id="duration" name="duration" min="1" max="10" step="0.1"><br><br>
+
+                <h4>Start Position</h4>
+                <!-- Button to set camera start position -->
+                <button id="setStartPositionFromMainCamera">Get Position from Browser View</button>
+                <button id="setStartPositionFromCustomCamera">Get Position from Custom Camera</button>
+                <!-- Label and Input to show/edit camera start positions -->
+                <h5>Camera Start Position</h5>
+                <label for="cameraStartPositionX">X:</label>
+                <input type="number" id="cameraStartPositionX" name="cameraStartPositionX"><br>
+                <label for="cameraStartPositionY">Y:</label>
+                <input type="number" id="cameraStartPositionY" name="cameraStartPositionY"><br>
+                <label for="cameraStartPositionZ">Z:</label>
+                <input type="number" id="cameraStartPositionZ" name="cameraStartPositionZ"><br>
+                <h5>Camera Start LookAt Position</h5>
+                <label for="cameraStartLookAtPositionX">X:</label>
+                <input type="number" id="cameraStartLookAtPositionX" name="cameraStartLookAtPositionX"><br>
+                <label for="cameraStartLookAtPositionY">Y:</label>
+                <input type="number" id="cameraStartLookAtPositionY" name="cameraStartLookAtPositionY"><br>
+                <label for="cameraStartLookAtPositionZ">Z:</label>
+                <input type="number" id="cameraStartLookAtPositionZ" name="cameraStartLookAtPositionZ"><br>
+                <br>
+
+                <h4>End Position</h4>
+                <!-- Button to set camera end position -->
+                <button id="setEndPositionFromMainCamera">Get Position from Browser View</button>
+                <button id="setEndPositionFromCustomCamera">Get Position from Custom Camera</button>
+                <!-- Label and Input to show/edit camera end positions -->
+                <h5>Camera End Position</h5>
+                <label for="cameraEndPositionX">X:</label>
+                <input type="number" id="cameraEndPositionX" name="cameraEndPositionX"><br>
+                <label for="cameraEndPositionY">Y:</label>
+                <input type="number" id="cameraEndPositionY" name="cameraEndPositionY"><br>
+                <label for="cameraEndPositionZ">Z:</label>
+                <input type="number" id="cameraEndPositionZ" name="cameraEndPositionZ"><br>
+                <h5>Camera End LookAt Position</h5>
+                <label for="cameraEndLookAtPositionX">X:</label>
+                <input type="number" id="cameraEndLookAtPositionX" name="cameraEndLookAtPositionX"><br>
+                <label for="cameraEndLookAtPositionY">Y:</label>
+                <input type="number" id="cameraEndLookAtPositionY" name="cameraEndLookAtPositionY"><br>
+                <label for="cameraEndLookAtPositionZ">Z:</label>
+                <input type="number" id="cameraEndLookAtPositionZ" name="cameraEndLookAtPositionZ"><br>
+                <br>
+
+                <!-- Button to create camera movement -->
+                <button id="createCameraMovement">Create Camera Movement</button>
+
+            <!-- Set order of camera sequences -->
+            <h3>Select Camera Sequence</h3>
+                
+                <select id="cameraSequenceDropdown">
+                    <option value="">Select a Camera Sequence</option>
+                    <!-- Options will be populated by JavaScript -->
+                </select>
+
+                <!-- Button to add selected camera sequence into the list -->
+                <button id="addToSequenceButton">Add to Sequence</button>
+
+                <!-- List of selected camera sequences -->
+                <ul id="selectedSequenceList"></ul>
+
+                <!-- Button to reset list of selected camera sequences -->
+                <button id="resetSequenceButton">Reset Sequences</button><br>
+
+                <!-- Button to start Recording -->
+                <button id="start-camera-sequence">Record</button>
         </p>
     </div>
     <script src="./js/scripts.js" type="module"></script>

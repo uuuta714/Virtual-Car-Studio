@@ -10,11 +10,13 @@
   "author": "Wael Yasmina",
   "license": "ISC",
   "dependencies": {
+    "ccapture.js-npmfixed": "^1.1.0",
     "gsap": "^3.12.5",
     "three": "^0.161.0"
   },
   "devDependencies": {
     "@parcel/config-default": "^2.10.3",
+    "buffer": "^6.0.3",
     "parcel": "^2.10.0",
     "parcel-reporter-static-files-copy": "^1.5.3"
   },
