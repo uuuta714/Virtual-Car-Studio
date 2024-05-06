@@ -274,6 +274,7 @@ var params = {
 // Add a toggle in the GUI
 gui.add(params, 'showCustomCameraHelper').name('Show Custom Camera').onChange(value => {
     customCameraHelper.visible = value;
+    transformControls.visible = value;
 });
 
 // Function to clean window for video recording
