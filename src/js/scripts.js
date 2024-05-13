@@ -7,11 +7,14 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { CCapture } from 'ccapture.js-npmfixed';
+import { WebMWriter } from 'webm-writer';
 
 const renderer = new THREE.WebGLRenderer({antialias: true});
+//renderer.preserveDrawingBuffer = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 const scene = new THREE.Scene();
+const tl = gsap.timeline();
 
 // Sets the color of the background
 renderer.setClearColor(0xFEFEFE);
@@ -80,8 +83,16 @@ window.addEventListener('keydown', function (event) {
 const capturer = new CCapture({
     format: 'webm',
     framerate: 60,
-    verbose: true
+    quality: 60
+    //verbose: true
 });
+
+// Flag to check if canvas is recorded
+var isRecording = false
+
+export function enableRecording() {
+    isRecording = true
+}
 
 // // Sets a 12 by 12 gird helper
 // const gridHelper = new THREE.GridHelper(12, 12);
@@ -112,18 +123,20 @@ rgbeLoader.load('./assets/MR_INT-001_NaturalStudio_NAD.hdr', function(texture) {
 });
 
 function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
-    capturer.capture(renderer.domElement);
+    if (!isRecording) {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+    }
 }
+
 animate();
+
 
 window.addEventListener('resize', function() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    //renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(window.innerWidth, window.innerHeight);
 });
-
 
 
 // Camera Controls
@@ -132,12 +145,57 @@ window.addEventListener('resize', function() {
 export const cameraSequenceOptions = [
     {
         id: 1,
-        name: 'Test',
-        startCameraPosition: new Vector3(1.49, 1.16, -3.20),
-        startLookAtPosition: new Vector3(-49.83, -29.07, 77.12),
-        endCameraPosition: new Vector3(-0.30, 4.74, -0.28),
-        endLookAtPosition: new Vector3(-0.30, -95.26, -0.28),
+        name: 'Front Dolly',
+        startCameraPosition: new Vector3(0.00, 1.00, 6.00),
+        startLookAtPosition: new Vector3(0.00, -8.50, -93.52),
+        endCameraPosition: new Vector3(0.00, 1.00, 3.41),
+        endLookAtPosition: new Vector3(0.00, -8.50, -93.52),
+        duration: 10.0
+    },
+    {
+        id: 2,
+        name: 'Front Pedestal',
+        startCameraPosition: new Vector3(0.00, 0.54, 3.00),
+        startLookAtPosition: new Vector3(0.10, -11.00, -96.25),
+        endCameraPosition: new Vector3(0.00, 1.00, 3.00),
+        endLookAtPosition: new Vector3(-0.95, -27.95, -92.66),
         duration: 7.0
+    },
+    {
+        id: 3,
+        name: 'Back Pan Porsche Logo',
+        startCameraPosition: new Vector3(0.35, 0.87, -2.45),
+        startLookAtPosition: new Vector3(-12.00, -32.25, 91.15),
+        endCameraPosition: new Vector3(-0.35, 0.87, -2.45),
+        endLookAtPosition: new Vector3(12.00, -32.25, 91.15),
+        duration: 7.0
+    },
+    {
+        id: 4,
+        name: 'Front Right Side Truck',
+        startCameraPosition: new Vector3(-1.04, 0.86, 2.81),
+        startLookAtPosition: new Vector3(40.26, -26.14, -84.17),
+        endCameraPosition: new Vector3(-1.34, 0.86, 0.14),
+        endLookAtPosition: new Vector3(40.26, -26.14, -84.17),
+        duration: 7.0
+    },
+    {
+        id: 5,
+        name: 'Front Super Zoom Porche Logo',
+        startCameraPosition: new Vector3(-0.02, 0.65, 2.10),
+        startLookAtPosition: new Vector3(-0.01, -30.01, -93.07),
+        endCameraPosition: new Vector3(-0.02, 0.60, 2.10),
+        endLookAtPosition: new Vector3(-0.01, -30.01, -93.07),
+        duration: 7.0
+    },
+    {
+        id: 6,
+        name: 'Top Right Dynamic',
+        startCameraPosition: new Vector3(-0.90, 3.50, 2.50),
+        startLookAtPosition: new Vector3(19.70, -76.58, -53.76),
+        endCameraPosition: new Vector3(-0.90, 3.50, -2.50),
+        endLookAtPosition: new Vector3(19.70, -76.58, 53.76),
+        duration: 15.0
     },
 ]
 
@@ -169,7 +227,30 @@ export function addCameraSequenceById(sequenceId) {
     }
 }
 
-const tl = gsap.timeline();
+
+// Function to start recording, stop and save the video
+async function recording(duration) {
+    capturer.start();
+    const nFrames = duration * 60; //Duration * Framerate
+    const step = 1 / nFrames;
+    for (let t = 0; t <= 1; t += step) {
+
+        if (!isRecording) {
+            break;
+        }
+
+        console.log(`Rendering progress at: ${t}`);  // Log progress
+        tl.progress(t);
+        capturer.capture(renderer.domElement);
+        await new Promise((resolve) => {
+            requestAnimationFrame(() => {
+                renderer.render(scene, camera);
+                resolve();
+            });
+        });
+        console.log(`Frame captured: ${Math.floor(t * nFrames)}/${Math.floor(nFrames)}`);
+    }
+}
 
 // Function to iterate selectedCameraSequence array to move camera from one sequence to another
 export function startCameraSequence() {
@@ -180,8 +261,9 @@ export function startCameraSequence() {
     
     tl.clear();
 
-    // Start recording
-    capturer.start();
+    if (isRecording) {
+        recording(totalDuration);
+    }
 
     selectedCameraSequence.forEach(sequence => {
         tl.add(() => {
@@ -213,10 +295,12 @@ export function startCameraSequence() {
 
     // Stop recording when the timeline is complete
     tl.eventCallback("onComplete", function() {
-        console.log(renderer.info.render.frame);
-        capturer.stop();
-        capturer.save();  // This triggers the download of the recorded video
-
+        // Stop recording and save the video 
+        if (isRecording) {
+            capturer.stop();
+            isRecording = false;
+            capturer.save();
+        }
         // Set the camera and view to original state
         camera.position.set(3, 3, 3);
         camera.lookAt(0, 0, 0);
@@ -289,4 +373,5 @@ function resetView() {
     customCameraHelper.visible = true;
     toggleGUIVisibility();
     transformControls.visible = true;
+    animate();
 }

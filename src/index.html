@@ -10,10 +10,10 @@
     <a href="#" id="open-slideout">&lt;&lt;&lt;</a>
     <div id="slideout" class="slideout">
         <div class="slideout-header">
+            <a href="#" id="close-slideout">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </a>
           <h3>Create Custom Video</h3>
-          <a href="#" id="close-slideout">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </a><br><br>
         <label>Press 'r' for rotation control of custom camera</label><br>
         <label>Press 't' for translation control of custom camera</label>
         </div>
@@ -76,26 +76,25 @@
 
             <!-- Set order of camera sequences -->
             <h3>Select Camera Sequence</h3>
-                
                 <select id="cameraSequenceDropdown">
                     <option value="">Select a Camera Sequence</option>
                     <!-- Options will be populated by JavaScript -->
                 </select>
-
                 <!-- Button to add selected camera sequence into the list -->
                 <button id="addToSequenceButton">Add to Sequence</button>
-
                 <!-- List of selected camera sequences -->
                 <ul id="selectedSequenceList"></ul>
-
                 <!-- Button to reset list of selected camera sequences -->
                 <button id="resetSequenceButton">Reset Sequences</button><br>
-
+                <!-- Button to start Preview -->
+                <button id="start-preview">Preview</button>
                 <!-- Button to start Recording -->
-                <button id="start-camera-sequence">Record</button>
+                <button id="start-recording">Record</button>
+
         </p>
     </div>
     <script src="./js/scripts.js" type="module"></script>
     <script src="./js/userInteractions.js" type="module"></script>
+    <script src="/node_modules/webm-writer/WebMWriter.js"></script>
 </body>
 </html>

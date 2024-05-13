@@ -8,7 +8,8 @@ import {
     resetCameraSequence,
     getCameraDetails,
     createCameraMovement,
-    cleanView } from './scripts.js';
+    cleanView,
+    enableRecording } from './scripts.js';
 
 
 // Event listener to open the side modal
@@ -123,11 +124,18 @@ document.getElementById('createCameraMovement').addEventListener('click', functi
     updateCameraSequenceDropdown();
 });
 
-// Start camera movements based on the selected camera sequence
-document.getElementById('start-camera-sequence').addEventListener('click', function(event) {
+// Start preview based on the selected camera sequence
+document.getElementById('start-preview').addEventListener('click', function(event) {
     event.preventDefault();
     cleanView();
-    document.getElementById('slideout').classList.remove('open');
+    startCameraSequence();
+});
+
+// Start recording based on the selected camera sequence
+document.getElementById('start-recording').addEventListener('click', function(event) {
+    event.preventDefault();
+    cleanView();
+    enableRecording();
     startCameraSequence();
 });
 
