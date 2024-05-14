@@ -36,6 +36,7 @@ export function onDocumentMouseDown(event) {
         // ignore the click if it was inside the slide-out element
         // Event listener for applying intensity change
         document.getElementById("applyIntensityButton").addEventListener("click", applyIntensityChange(selectedObject));
+        document.getElementById("applyColorButton").addEventListener("click", applyColorChange(selectedObject));
         return;
     }
 
@@ -195,6 +196,23 @@ function applyIntensityChange(selectedObject) {
                     if (!isNaN(intensity)) {
                         pointLight.intensity = intensity;
                     }
+                }
+            }
+        })
+    }
+}
+
+// Function to apply color change
+function applyColorChange(selectedObject) {
+    if (selectedObject) {
+        const colorPicker = document.getElementById("colorPicker");
+        const color = new THREE.Color(colorPicker.value);
+        selectedObject.model.children[0].traverse((child) => {
+            if (child.isMesh) {
+                if (child.name == "Object_7") {
+                    const pointLight = child.children[0];
+                    console.log(pointLight);
+                    pointLight.color = color;
                 }
             }
         })
