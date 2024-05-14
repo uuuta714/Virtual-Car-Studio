@@ -33,10 +33,13 @@ export function onDocumentMouseDown(event) {
         event.clientY >= rect.top &&
         event.clientY <= rect.bottom
     ) {
-        // ignore the click if it was inside the slide-out element
-        // Event listener for applying intensity change
+        // ignore the click if it was inside the slide-out element and apply the parameterised control
+
+        // Event listener for applying intensity and color change
         document.getElementById("applyIntensityButton").addEventListener("click", applyIntensityChange(selectedObject));
         document.getElementById("applyColorButton").addEventListener("click", applyColorChange(selectedObject));
+        // Event listener for deleting light instance
+        document.getElementById("deleteLightButton").addEventListener("click", deleteLightInstance);
         return;
     }
 
@@ -166,6 +169,14 @@ function createLightInstance() {
     };
 }
 
+// Function to delete the selected light instance
+function deleteLightInstance() {
+    if (selectedObject) {
+        scene.remove(selectedObject.model);
+        selectedObject = null;
+    }
+}
+
 // Event listener for moving objects
 document.addEventListener('mousedown', onDocumentMouseDown);
 document.addEventListener('keydown', onDocumentKeyDown);
@@ -185,6 +196,7 @@ export function closeSlideOut() {
 
 // Event listener for adding light instance
 document.getElementById("addLightButton").addEventListener("click", createLightInstance);
+
 
 // Function to apply intensity change
 function applyIntensityChange(selectedObject) {
