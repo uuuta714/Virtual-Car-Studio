@@ -75,7 +75,7 @@ export function onDocumentMouseDown(event) {
             if (selectedObject) {
                 // Move selected object to the hit point if needed
                 var pos = intersects[0].point;
-                if (true) {
+                if (!checkForCollisions(selectedObject, pos)) {
                     selectedObject.model.position.x = pos.x;
                     selectedObject.model.position.z = pos.z;
                     selectedObject.box.setFromObject(selectedObject.model);
@@ -89,6 +89,21 @@ export function onDocumentMouseDown(event) {
         selectedObject = null; // Deselect any selected object
     }
   }
+}
+
+// function to check collisions
+function checkForCollisions(objectData, newPosition) {
+    let tempBox = new THREE.Box3().copy(objectData.box);  // Copy the existing box
+    tempBox.setFromObject(objectData.model);  // Update to the new position temporarily
+    tempBox.translate(new THREE.Vector3(newPosition.x - objectData.model.position.x, 0, newPosition.z - objectData.model.position.z));
+    
+    for (let key in objects) {
+        if (objects[key] !== objectData && tempBox.intersectsBox(objects[key].box)) {
+            console.log(`Collision detected with ${key}`);
+            return true;  // Collision detected
+        }
+    }
+    return false;  // No collision
 }
 
 
@@ -165,7 +180,7 @@ function createLightInstance() {
     objects[newModel.name] = {
         model: newModel,
         box: new THREE.Box3().setFromObject(newModel),
-        // helper: new THREE.Box3Helper(new THREE.Box3(), 0xffff00)
+        helper: new THREE.Box3Helper(new THREE.Box3(), 0xffff00)
     };
 }
 
@@ -233,3 +248,18 @@ function applyColorChange(selectedObject) {
         })
     }
 }
+
+// Function to populate the dropdown with light objects
+function populateLightSelector() {
+    console.log(objects);
+    const lightSelector = document.getElementById('objectSelector');    
+    for (let object in objects) {
+        console.log(object);
+        const option = document.createElement('option');
+        option.value = object.name;
+        option.textContent = object.name;
+        lightSelector.appendChild(option);       
+    }
+}
+
+populateLightSelector();

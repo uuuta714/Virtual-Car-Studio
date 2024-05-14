@@ -151,14 +151,14 @@ gltfLoader.load('./assets/studio_light/scene.gltf', function(gltf) {
     scene.add(model);
     
     const box = new THREE.Box3().setFromObject(model);
-    // const helper = new THREE.Box3Helper(box, 0xffff00);
-    // helper.visible = false;
-    // scene.add(helper);
+    const helper = new THREE.Box3Helper(box, 0xffff00);
+    helper.visible = false;
+    scene.add(helper);
 
     objects[model.name] = {
     model: model,
     box: box,
-    // helper: helper
+    helper: helper
     };
     console.log(model);
 });
