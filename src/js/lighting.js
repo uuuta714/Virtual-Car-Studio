@@ -49,19 +49,26 @@ export function onDocumentMouseDown(event) {
 
     const raycaster = new THREE.Raycaster();
     raycaster.setFromCamera(mouse, camera);
-    var intersects = raycaster.intersectObjects(scene.children, true);
+    const filteredObjects = scene.children.filter(object => object.name !== 'topLight');
+    var intersects = raycaster.intersectObjects(filteredObjects, true);
 
     if (intersects.length > 0) {
 		let hit = intersects[0].object;
    
         if (intersects.length) {
-            // Cycle upwards through every parent until it reaches the topmost layer
-            // This top layer is the group created by the GLTFLoader function
-            let current = intersects[0].object;
-            while (current.parent.parent !== null) {
-            current = current.parent;
+            // locate the object from the 10 closest intersections
+            for (let i = 0; i < intersects.length; i++) {
+                let current = intersects[i].object;
+                if (current.isMesh) {
+                    // traverse to the parent to move the whole object
+                    while (current.parent.parent !== null) {
+                    current = current.parent;
+                    }
+                    hit = current;
+                }
+                break;
             }
-            hit = current;
+
             
         if (hit.name in objects) {
             if (selectedObject != objects[hit.name]) {
@@ -75,7 +82,7 @@ export function onDocumentMouseDown(event) {
             if (selectedObject) {
                 // Move selected object to the hit point if needed
                 var pos = intersects[0].point;
-                if (!checkForCollisions(selectedObject, pos)) {
+                if (true) {
                     selectedObject.model.position.x = pos.x;
                     selectedObject.model.position.z = pos.z;
                     selectedObject.box.setFromObject(selectedObject.model);
@@ -91,20 +98,20 @@ export function onDocumentMouseDown(event) {
   }
 }
 
-// function to check collisions
-function checkForCollisions(objectData, newPosition) {
-    let tempBox = new THREE.Box3().copy(objectData.box);  // Copy the existing box
-    tempBox.setFromObject(objectData.model);  // Update to the new position temporarily
-    tempBox.translate(new THREE.Vector3(newPosition.x - objectData.model.position.x, 0, newPosition.z - objectData.model.position.z));
+// // function to check collisions
+// function checkForCollisions(objectData, newPosition) {
+//     let tempBox = new THREE.Box3().copy(objectData.box);  // Copy the existing box
+//     tempBox.setFromObject(objectData.model);  // Update to the new position temporarily
+//     tempBox.translate(new THREE.Vector3(newPosition.x - objectData.model.position.x, 0, newPosition.z - objectData.model.position.z));
     
-    for (let key in objects) {
-        if (objects[key] !== objectData && tempBox.intersectsBox(objects[key].box)) {
-            console.log(`Collision detected with ${key}`);
-            return true;  // Collision detected
-        }
-    }
-    return false;  // No collision
-}
+//     for (let key in objects) {
+//         if (objects[key] !== objectData && tempBox.intersectsBox(objects[key].box)) {
+//             console.log(`Collision detected with ${key}`);
+//             return true;  // Collision detected
+//         }
+//     }
+//     return false;  // No collision
+// }
 
 
 let controls;
