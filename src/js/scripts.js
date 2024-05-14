@@ -105,9 +105,9 @@ export function enableRecording() {
 const gltfLoader = new GLTFLoader();
 const rgbeLoader = new RGBELoader();
 
-// renderer.outputEncoding = THREE.sRGBEncoding;
-// renderer.toneMapping = THREE.ACESFilmicToneMapping;
-// renderer.toneMappingExposure = 4;
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 4;
 
 //load car model
 let car;
@@ -130,16 +130,18 @@ export var selectedObject = null;
 let light;
 gltfLoader.load('./assets/studio_light/scene.gltf', function(gltf) {
     const model = gltf.scene;
+    console.log(model);
     model.name = "studioLight";
     model.traverse(function (child) {
         if (child.isMesh) {
             if (child.name == 'Object_7') {
                 var material = child.material;
-                material.emissive.set(0,218,185);
+                material.emissive.set(0,135,185);
                 material.needsUpdate = true;
-                const pointLight = new THREE.PointLight( new THREE.Color(0,218,185), 5 );
+                const pointLight = new THREE.PointLight( new THREE.Color(0,218,185), 1 );
                 child.add( pointLight );
                 pointLight.name = pointLight;
+                console.log(pointLight);
                 }				
         }
         });
@@ -158,7 +160,9 @@ gltfLoader.load('./assets/studio_light/scene.gltf', function(gltf) {
     box: box,
     // helper: helper
     };
+    console.log(model);
 });
+
 
 function animate() {
     if (!isRecording) {

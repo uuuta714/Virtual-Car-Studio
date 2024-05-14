@@ -21,9 +21,27 @@ const mouse = new THREE.Vector2();
 // Function for mouse control
 export function onDocumentMouseDown(event) {
     // Implementation of mouse down interactions
+    const slideOutElement = document.getElementById('rightSlideout');
+
+    // Get the bounding rectangle of the slide-out element
+    const rect = slideOutElement.getBoundingClientRect();
+
+    // Check if the mouse event is within the slide-out element
+    if (
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom
+    ) {
+        // ignore the click if it was inside the slide-out element
+        // Event listener for applying intensity change
+        document.getElementById("applyIntensityButton").addEventListener("click", applyIntensityChange(selectedObject));
+        return;
+    }
+
     var mouse = new THREE.Vector2();
     mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
-	  mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
+	mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
 
     const raycaster = new THREE.Raycaster();
     raycaster.setFromCamera(mouse, camera);
@@ -46,8 +64,6 @@ export function onDocumentMouseDown(event) {
                 selectedObject = objects[hit.name];
                 console.log(`Selected ${hit.name}`);
 				openSlideOut();
-				// document.getElementById("applyIntensityButton").addEventListener("click", applyIntensityChange());
-				// document.getElementById("applyColorButton").addEventListener("click", applyColorChange(selectedObject));
             } else {
                 console.log(`${hit.name} is already selected`);
             }
@@ -161,4 +177,26 @@ export function openSlideOut() {
 
 export function closeSlideOut() {
     document.getElementById("rightSlideout").style.right = "-250px";
+}
+
+// Event listener for adding light instance
+document.getElementById("addLightButton").addEventListener("click", createLightInstance);
+
+// Function to apply intensity change
+function applyIntensityChange(selectedObject) {
+    if (selectedObject) {
+        const intensityInput = document.getElementById("intensityInput");
+        const intensity = parseFloat(intensityInput.value);
+        selectedObject.model.children[0].traverse((child) => {
+            if (child.isMesh) {
+                if (child.name == "Object_7") {
+                    const pointLight = child.children[0];
+                    console.log(pointLight);
+                    if (!isNaN(intensity)) {
+                        pointLight.intensity = intensity;
+                    }
+                }
+            }
+        })
+    }
 }
