@@ -136,9 +136,9 @@ gltfLoader.load('./assets/studio_light/scene.gltf', function(gltf) {
         if (child.isMesh) {
             if (child.name == 'Object_7') {
                 var material = child.material;
-                material.emissive.set(0,135,185);
+                material.emissive.set(new THREE.Color(0xffffff));
                 material.needsUpdate = true;
-                const pointLight = new THREE.PointLight( new THREE.Color(0XFFFFFF), 3 );
+                const pointLight = new THREE.PointLight( new THREE.Color(0xffffff), 3 );
                 child.add( pointLight );
                 pointLight.name = pointLight;
                 console.log(pointLight);

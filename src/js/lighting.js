@@ -214,8 +214,8 @@ function applyColorChange(selectedObject) {
             if (child.isMesh) {
                 if (child.name == "Object_7") {
                     const pointLight = child.children[0];
-                    console.log(pointLight);
                     pointLight.color = color;
+                    child.material.emissive.set(color);
                 }
             }
         })
