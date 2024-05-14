@@ -114,9 +114,6 @@ export function onDocumentKeyDown(event) {
             case "l":
                 rotateObject(selectedObject, 4);
                 break;
-            case "r":
-                rotateObject(selectedObject, -4);
-                break;
         }
     }
   }
