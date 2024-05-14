@@ -111,6 +111,12 @@ export function onDocumentKeyDown(event) {
                 selectedObject = null;
                 console.log("deselected");
                 break;
+            case "l":
+                rotateObject(selectedObject, 4);
+                break;
+            case "r":
+                rotateObject(selectedObject, -4);
+                break;
         }
     }
   }
