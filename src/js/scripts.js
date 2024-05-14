@@ -141,7 +141,6 @@ gltfLoader.load('./assets/studio_light/scene.gltf', function(gltf) {
                 const pointLight = new THREE.PointLight( new THREE.Color(0xffffff), 3 );
                 child.add( pointLight );
                 pointLight.name = pointLight;
-                console.log(pointLight);
                 }				
         }
         });
@@ -163,6 +162,41 @@ gltfLoader.load('./assets/studio_light/scene.gltf', function(gltf) {
     console.log(model);
 });
 
+// top light
+let topLight;
+    gltfLoader.load('./assets/top_light/scene.gltf', function(gltf) {
+        const model = gltf.scene;
+		model.name = "topLight";
+        model.traverse(function (child) {
+            if (child.isMesh) {
+                if (child.name == 'L1_L1_BODY_0') {
+                    const directionalLight = new THREE.DirectionalLight( new THREE.Color(255,218,185), 0.001);
+					// spotLight.decay = 2;
+                    // spotLight.angle = Math.PI/6;
+					// spotLight.penumbra = 1;
+                    child.add( directionalLight );
+                    directionalLight.name = directionalLight;
+                  }
+            child.castShadow = true;
+            }
+          });
+
+		model.position.set(-0.3,3.6,-0.5);
+        model.scale.set(3,1.5,5);
+		model.rotation.set(0,90 * Math.PI / 180,0);
+		scene.add(model);
+
+		const box = new THREE.Box3().setFromObject(model);
+		const helper = new THREE.Box3Helper(box, 0xffff00);
+		helper.visible = false;
+		scene.add(helper);
+
+		objects[model.name] = {
+		model: model,
+		box: box,
+		helper: helper
+		};
+    });
 
 function animate() {
     if (!isRecording) {
