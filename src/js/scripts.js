@@ -9,15 +9,15 @@ import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { CCapture } from 'ccapture.js-npmfixed';
 import { WebMWriter } from 'webm-writer';
 
-const renderer = new THREE.WebGLRenderer({antialias: true});
+export const renderer = new THREE.WebGLRenderer({antialias: true});
 //renderer.preserveDrawingBuffer = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
-const scene = new THREE.Scene();
+export const scene = new THREE.Scene();
 const tl = gsap.timeline();
 
 // Sets the color of the background
-renderer.setClearColor(0xFEFEFE);
+renderer.setClearColor(0x000000);
 
 
 // Create Main Camera
@@ -105,14 +105,15 @@ export function enableRecording() {
 const gltfLoader = new GLTFLoader();
 const rgbeLoader = new RGBELoader();
 
-renderer.outputEncoding = THREE.sRGBEncoding;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 4;
+// renderer.outputEncoding = THREE.sRGBEncoding;
+// renderer.toneMapping = THREE.ACESFilmicToneMapping;
+// renderer.toneMappingExposure = 4;
 
+//load car model
 let car;
 rgbeLoader.load('./assets/MR_INT-001_NaturalStudio_NAD.hdr', function(texture) {
-    texture.mapping = THREE.EquirectangularReflectionMapping;
-    scene.environment = texture;
+    // texture.mapping = THREE.EquirectangularReflectionMapping;
+    // scene.environment = texture;
 
     gltfLoader.load('./assets/scene.gltf', function(gltf) {
         const model = gltf.scene;
@@ -120,6 +121,43 @@ rgbeLoader.load('./assets/MR_INT-001_NaturalStudio_NAD.hdr', function(texture) {
         model.position.y += 0.65;
         car = model;
     });
+});
+
+
+export let objects = {};
+export var selectedObject = null;
+// load studio light (directional light)
+let light;
+gltfLoader.load('./assets/studio_light/scene.gltf', function(gltf) {
+    const model = gltf.scene;
+    model.name = "studioLight";
+    model.traverse(function (child) {
+        if (child.isMesh) {
+            if (child.name == 'Object_7') {
+                var material = child.material;
+                material.emissive.set(0,218,185);
+                material.needsUpdate = true;
+                const pointLight = new THREE.PointLight( new THREE.Color(0,218,185), 5 );
+                child.add( pointLight );
+                pointLight.name = pointLight;
+                }				
+        }
+        });
+
+    model.position.set(0,0,-5);
+    model.scale.set(0.3,0.15,0.2);
+    scene.add(model);
+    
+    const box = new THREE.Box3().setFromObject(model);
+    // const helper = new THREE.Box3Helper(box, 0xffff00);
+    // helper.visible = false;
+    // scene.add(helper);
+
+    objects[model.name] = {
+    model: model,
+    box: box,
+    // helper: helper
+    };
 });
 
 function animate() {

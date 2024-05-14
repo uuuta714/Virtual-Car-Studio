@@ -29,3 +29,38 @@ body {
     display: inline-block;
     margin: 0px 10px; }
 
+
+    #rightSlideout {
+        position: fixed;
+        top: 0;
+        right: -250px; /* Initially hidden */
+        width: 250px;
+        height: 100%;
+        background-color: #fff;
+        color: #fff;
+        transition: right 0.3s ease;
+    } 
+    
+    #openButton {
+        background-color: #fff;
+        color: #020202;
+    } 
+    
+    #rightSlideoutContent {
+        padding: 20px;
+        color: #000;
+    }
+    
+    button {
+        margin-bottom: 10px;
+        padding: 10px;
+        background-color: #555;
+        border: none;
+        color: #fff;
+        cursor: pointer;
+    }
+    
+    button:hover {
+        background-color: #777;
+    }
+    

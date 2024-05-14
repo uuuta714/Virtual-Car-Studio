@@ -9,7 +9,14 @@ import {
     getCameraDetails,
     createCameraMovement,
     cleanView,
-    enableRecording } from './scripts.js';
+    enableRecording,
+    objects,
+    selectedObject } from './scripts.js';
+
+import {
+    onDocumentKeyDown,
+    onDocumentMouseDown
+    } from './lighting.js';
 
 
 // Event listener to open the side modal
@@ -187,3 +194,21 @@ document.getElementById('resetSequenceButton').addEventListener('click', () => {
     updateSequenceListDisplay(); // Update the list display after reset
     console.log('Selected Camera Sequences have been reset');
 });
+
+// Event listener for opening lighting control slideout
+document.getElementById("openButton").addEventListener("click", openSlideOut);
+document.getElementById("closeButton").addEventListener("click", closeSlideOut);
+
+// Control the lighting control slideout
+export function openSlideOut() {
+    document.getElementById("rightSlideout").style.right = "0";
+}
+
+export function closeSlideOut() {
+    document.getElementById("rightSlideout").style.right = "-250px";
+}
+
+
+// // Event listener for adding light isntance
+// document.getElementById("addLightButton").addEventListener("click", createLightInstance);
+
