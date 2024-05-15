@@ -128,7 +128,7 @@ rgbeLoader.load('./assets/MR_INT-001_NaturalStudio_NAD.hdr', function(texture) {
 
 export let objects = {};
 export var selectedObject = null;
-// load studio light (directional light)
+// load studio light
 let light;
 gltfLoader.load('./assets/studio_light/scene.gltf', function(gltf) {
     const model = gltf.scene;

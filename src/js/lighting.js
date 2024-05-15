@@ -68,8 +68,6 @@ export function onDocumentMouseDown(event) {
                 }
                 break;
             }
-
-            
         if (hit.name in objects) {
             if (selectedObject != objects[hit.name]) {
                 selectedObject = objects[hit.name];
@@ -82,6 +80,7 @@ export function onDocumentMouseDown(event) {
             if (selectedObject) {
                 // Move selected object to the hit point if needed
                 var pos = intersects[0].point;
+                // collision control to be implemented
                 if (true) {
                     selectedObject.model.position.x = pos.x;
                     selectedObject.model.position.z = pos.z;
