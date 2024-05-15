@@ -56,12 +56,14 @@ customCamera.updateMatrixWorld();
 // Custom camera helper
 const customCameraHelper = new THREE.CameraHelper( customCamera );
 scene.add( customCameraHelper );
+customCameraHelper.visible = false;
 
 // Transform Controls
 const transformControls = new TransformControls(camera, renderer.domElement);
 transformControls.attach(customCamera);
 transformControls.setMode('rotate');
 scene.add(transformControls);
+transformControls.visible = false;
 
 transformControls.addEventListener('dragging-changed', function (event) {
     orbitControls.enabled = !event.value
@@ -130,7 +132,6 @@ export var selectedObject = null;
 let light;
 gltfLoader.load('./assets/studio_light/scene.gltf', function(gltf) {
     const model = gltf.scene;
-    console.log(model);
     model.name = "studioLight";
     model.traverse(function (child) {
         if (child.isMesh) {
@@ -159,7 +160,6 @@ gltfLoader.load('./assets/studio_light/scene.gltf', function(gltf) {
     box: box,
     helper: helper
     };
-    console.log(model);
 });
 
 // top light
@@ -428,7 +428,7 @@ function toggleGUIVisibility() {
 
 // Parameters of GUI
 var params = {
-    showCustomCameraHelper: true,
+    showCustomCameraHelper: false,
 };
 
 // Add a toggle in the GUI
@@ -446,7 +446,7 @@ export function cleanView() {
 
 // Function to reset window after video recording
 function resetView() {
-    customCameraHelper.visible = true;
+    customCameraHelper.visible = false;
     toggleGUIVisibility();
     transformControls.visible = true;
     animate();

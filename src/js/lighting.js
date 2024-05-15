@@ -229,7 +229,6 @@ function applyIntensityChange(selectedObject) {
             if (child.isMesh) {
                 if (child.name == "Object_7") {
                     const pointLight = child.children[0];
-                    console.log(pointLight);
                     if (!isNaN(intensity)) {
                         pointLight.intensity = intensity;
                     }
@@ -249,24 +248,10 @@ function applyColorChange(selectedObject) {
                 if (child.name == "Object_7") {
                     const pointLight = child.children[0];
                     pointLight.color = color;
+                    console.log("found");
                     child.material.emissive.set(color);
                 }
             }
         })
     }
 }
-
-// Function to populate the dropdown with light objects
-function populateLightSelector() {
-    console.log(objects);
-    const lightSelector = document.getElementById('objectSelector');    
-    for (let object in objects) {
-        console.log(object);
-        const option = document.createElement('option');
-        option.value = object.name;
-        option.textContent = object.name;
-        lightSelector.appendChild(option);       
-    }
-}
-
-populateLightSelector();
