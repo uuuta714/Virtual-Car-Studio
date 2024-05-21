@@ -18,6 +18,8 @@ import {
     onDocumentMouseDown
     } from './lighting.js';
 
+import * as bootstrap from 'bootstrap';
+
 
 // Event listener to open the side modal
 document.getElementById('open-slideout').addEventListener('click', function(event) {
