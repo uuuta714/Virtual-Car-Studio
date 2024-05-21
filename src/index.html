@@ -8,117 +8,142 @@
     <link rel="stylesheet" href="scss/styles.scss">
 </head>
 <body>
-    <button id="openButton">Lighting control</button> 
-    <div id="rightSlideout">
-		<div id="rightSlideoutContent">
-			<p>Instruction</p>
-            <p>Mouse Click: select or drop object</p>
-            <p>ESC: deselect object</p>
-            <p>Arrow Key: move object</p>
-            <p>L: rotate object anti-clockwise</p>
-			<button id="addLightButton" class="btn btn-primary">Add Light Instance</button>
-            <button id = "deleteLightButton">Delete Light Instance</button>
-                <div>
-                    <label for="intensityInput">Intensity:</label>
-                    <input type="number" id="intensityInput" min="0" step="0.01">
-                    <button id="applyIntensityButton">Apply</button>                    
+    <!-- WIP From -->
+    <nav class="navbar bg-body-tertiary fixed-top">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Virtual Car Studio</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <!-- Offcanvas -->
+          <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+            <!-- Header -->
+            <div class="offcanvas-header">
+              <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <!-- Body -->
+            <div class="offcanvas-body">
+                <!-- Tabs -->
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="lighting-tab" data-bs-toggle="tab" data-bs-target="#lighting-tab-pane" type="button" role="tab" aria-controls="lighting-tab-pane" aria-selected="true">Lighting</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="camera-tab" data-bs-toggle="tab" data-bs-target="#camera-tab-pane" type="button" role="tab" aria-controls="camera-tab-pane" aria-selected="false">Camera</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <!-- Lighting -->
+                    <div class="tab-pane fade show active" id="lighting-tab-pane" role="tabpanel" aria-labelledby="lighting-tab" tabindex="0">
+                        <div id="lighting-content">
+                            <p>Instruction</p>
+                            <p>Mouse Click: select or drop object</p>
+                            <p>ESC: deselect object</p>
+                            <p>Arrow Key: move object</p>
+                            <p>L: rotate object anti-clockwise</p>
+                            <button id="addLightButton" class="btn btn-primary">Add Light Instance</button>
+                            <button id = "deleteLightButton" class="btn btn-primary">Delete Light Instance</button>
+                                <div>
+                                    <label for="intensityInput">Intensity:</label>
+                                    <input type="number" id="intensityInput" min="0" step="0.01">
+                                    <button id="applyIntensityButton" class="btn btn-primary">Apply</button>                    
+                                </div>
+                            <div>
+                                <label for="colorPicker">Color:</label>
+                                <input type="color" id="colorPicker" value="#ffffff">
+                                <button id="applyColorButton" class="btn btn-primary">Apply</button>
+                            </div>
+                            <button id="closeButton" class="btn btn-primary">Close</button>
+                        </div>
+                    </div>
+                    <!-- Camera -->
+                    <div class="tab-pane fade" id="camera-tab-pane" role="tabpanel" aria-labelledby="camera-tab" tabindex="0">
+                        <div id="camera-content">
+                            <h3>Create Custom Video</h3>
+                            <label>Press 'r' for rotation control of custom camera</label><br>
+                            <label>Press 't' for translation control of custom camera</label>
+                            <!-- Create custom camera movement -->
+                            <h3>Create Custom Camera Movement</h3>
+
+                            <!-- Label and Input to set name of camera movement -->
+                            <label for="cameraMovementName">Name:</label>
+                            <input type="text" id="cameraMovementName" name="cameraMovementName"><br><br>
+
+                            <!-- Label and Input to set duration -->
+                            <label for="duration">Duration (sec):</label>
+                            <input type="number" id="duration" name="duration" min="1" max="10" step="0.1"><br><br>
+
+                            <h4>Start Position</h4>
+                            <!-- Button to set camera start position -->
+                            <button id="setStartPositionFromMainCamera" class="btn btn-primary">Get Position from Browser View</button>
+                            <button id="setStartPositionFromCustomCamera" class="btn btn-primary">Get Position from Custom Camera</button>
+                            <!-- Label and Input to show/edit camera start positions -->
+                            <h5>Camera Start Position</h5>
+                            <label for="cameraStartPositionX">X:</label>
+                            <input type="number" id="cameraStartPositionX" name="cameraStartPositionX"><br>
+                            <label for="cameraStartPositionY">Y:</label>
+                            <input type="number" id="cameraStartPositionY" name="cameraStartPositionY"><br>
+                            <label for="cameraStartPositionZ">Z:</label>
+                            <input type="number" id="cameraStartPositionZ" name="cameraStartPositionZ"><br>
+                            <h5>Camera Start LookAt Position</h5>
+                            <label for="cameraStartLookAtPositionX">X:</label>
+                            <input type="number" id="cameraStartLookAtPositionX" name="cameraStartLookAtPositionX"><br>
+                            <label for="cameraStartLookAtPositionY">Y:</label>
+                            <input type="number" id="cameraStartLookAtPositionY" name="cameraStartLookAtPositionY"><br>
+                            <label for="cameraStartLookAtPositionZ">Z:</label>
+                            <input type="number" id="cameraStartLookAtPositionZ" name="cameraStartLookAtPositionZ"><br>
+                            <br>
+
+                            <h4>End Position</h4>
+                            <!-- Button to set camera end position -->
+                            <button id="setEndPositionFromMainCamera" class="btn btn-primary">Get Position from Browser View</button>
+                            <button id="setEndPositionFromCustomCamera" class="btn btn-primary">Get Position from Custom Camera</button>
+                            <!-- Label and Input to show/edit camera end positions -->
+                            <h5>Camera End Position</h5>
+                            <label for="cameraEndPositionX">X:</label>
+                            <input type="number" id="cameraEndPositionX" name="cameraEndPositionX"><br>
+                            <label for="cameraEndPositionY">Y:</label>
+                            <input type="number" id="cameraEndPositionY" name="cameraEndPositionY"><br>
+                            <label for="cameraEndPositionZ">Z:</label>
+                            <input type="number" id="cameraEndPositionZ" name="cameraEndPositionZ"><br>
+                            <h5>Camera End LookAt Position</h5>
+                            <label for="cameraEndLookAtPositionX">X:</label>
+                            <input type="number" id="cameraEndLookAtPositionX" name="cameraEndLookAtPositionX"><br>
+                            <label for="cameraEndLookAtPositionY">Y:</label>
+                            <input type="number" id="cameraEndLookAtPositionY" name="cameraEndLookAtPositionY"><br>
+                            <label for="cameraEndLookAtPositionZ">Z:</label>
+                            <input type="number" id="cameraEndLookAtPositionZ" name="cameraEndLookAtPositionZ"><br>
+                            <br>
+
+                            <!-- Button to create camera movement -->
+                            <button id="createCameraMovement" class="btn btn-primary">Create Camera Movement</button>
+
+                        <!-- Set order of camera sequences -->
+                        <h3>Select Camera Sequence</h3>
+                            <select id="cameraSequenceDropdown">
+                                <option value="">Select a Camera Sequence</option>
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                            <!-- Button to add selected camera sequence into the list -->
+                            <button id="addToSequenceButton" class="btn btn-primary">Add to Sequence</button>
+                            <!-- List of selected camera sequences -->
+                            <ul id="selectedSequenceList"></ul>
+                            <!-- Button to reset list of selected camera sequences -->
+                            <button id="resetSequenceButton" class="btn btn-primary">Reset Sequences</button><br>
+                            <!-- Button to start Preview -->
+                            <button id="start-preview" class="btn btn-primary">Preview</button>
+                            <!-- Button to start Recording -->
+                            <button id="start-recording" class="btn btn-primary">Record</button>
+                        </div>
+                    </div>
                 </div>
-			<div>
-				<label for="colorPicker">Color:</label>
-				<input type="color" id="colorPicker" value="#ffffff">
-				<button id="applyColorButton">Apply</button>
-			</div>
-            <button id="closeButton">Close</button>
-
-		</div>
-	</div>
-
-    <a href="#" id="open-slideout">&lt;&lt;&lt;</a>
-    <div id="slideout" class="slideout">
-        <div class="slideout-header">
-            <a href="#" id="close-slideout">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </a>
-          <h3>Create Custom Video</h3>
-        <label>Press 'r' for rotation control of custom camera</label><br>
-        <label>Press 't' for translation control of custom camera</label>
+            </div>
+          </div>
         </div>
-        <p>
-            <!-- Create custom camera movement -->
-            <h3>Create Custom Camera Movement</h3>
-
-                <!-- Label and Input to set name of camera movement -->
-                <label for="cameraMovementName">Name:</label>
-                <input type="text" id="cameraMovementName" name="cameraMovementName"><br><br>
-
-                <!-- Label and Input to set duration -->
-                <label for="duration">Duration (sec):</label>
-                <input type="number" id="duration" name="duration" min="1" max="10" step="0.1"><br><br>
-
-                <h4>Start Position</h4>
-                <!-- Button to set camera start position -->
-                <button id="setStartPositionFromMainCamera">Get Position from Browser View</button>
-                <button id="setStartPositionFromCustomCamera">Get Position from Custom Camera</button>
-                <!-- Label and Input to show/edit camera start positions -->
-                <h5>Camera Start Position</h5>
-                <label for="cameraStartPositionX">X:</label>
-                <input type="number" id="cameraStartPositionX" name="cameraStartPositionX"><br>
-                <label for="cameraStartPositionY">Y:</label>
-                <input type="number" id="cameraStartPositionY" name="cameraStartPositionY"><br>
-                <label for="cameraStartPositionZ">Z:</label>
-                <input type="number" id="cameraStartPositionZ" name="cameraStartPositionZ"><br>
-                <h5>Camera Start LookAt Position</h5>
-                <label for="cameraStartLookAtPositionX">X:</label>
-                <input type="number" id="cameraStartLookAtPositionX" name="cameraStartLookAtPositionX"><br>
-                <label for="cameraStartLookAtPositionY">Y:</label>
-                <input type="number" id="cameraStartLookAtPositionY" name="cameraStartLookAtPositionY"><br>
-                <label for="cameraStartLookAtPositionZ">Z:</label>
-                <input type="number" id="cameraStartLookAtPositionZ" name="cameraStartLookAtPositionZ"><br>
-                <br>
-
-                <h4>End Position</h4>
-                <!-- Button to set camera end position -->
-                <button id="setEndPositionFromMainCamera">Get Position from Browser View</button>
-                <button id="setEndPositionFromCustomCamera">Get Position from Custom Camera</button>
-                <!-- Label and Input to show/edit camera end positions -->
-                <h5>Camera End Position</h5>
-                <label for="cameraEndPositionX">X:</label>
-                <input type="number" id="cameraEndPositionX" name="cameraEndPositionX"><br>
-                <label for="cameraEndPositionY">Y:</label>
-                <input type="number" id="cameraEndPositionY" name="cameraEndPositionY"><br>
-                <label for="cameraEndPositionZ">Z:</label>
-                <input type="number" id="cameraEndPositionZ" name="cameraEndPositionZ"><br>
-                <h5>Camera End LookAt Position</h5>
-                <label for="cameraEndLookAtPositionX">X:</label>
-                <input type="number" id="cameraEndLookAtPositionX" name="cameraEndLookAtPositionX"><br>
-                <label for="cameraEndLookAtPositionY">Y:</label>
-                <input type="number" id="cameraEndLookAtPositionY" name="cameraEndLookAtPositionY"><br>
-                <label for="cameraEndLookAtPositionZ">Z:</label>
-                <input type="number" id="cameraEndLookAtPositionZ" name="cameraEndLookAtPositionZ"><br>
-                <br>
-
-                <!-- Button to create camera movement -->
-                <button id="createCameraMovement">Create Camera Movement</button>
-
-            <!-- Set order of camera sequences -->
-            <h3>Select Camera Sequence</h3>
-                <select id="cameraSequenceDropdown">
-                    <option value="">Select a Camera Sequence</option>
-                    <!-- Options will be populated by JavaScript -->
-                </select>
-                <!-- Button to add selected camera sequence into the list -->
-                <button id="addToSequenceButton">Add to Sequence</button>
-                <!-- List of selected camera sequences -->
-                <ul id="selectedSequenceList"></ul>
-                <!-- Button to reset list of selected camera sequences -->
-                <button id="resetSequenceButton">Reset Sequences</button><br>
-                <!-- Button to start Preview -->
-                <button id="start-preview">Preview</button>
-                <!-- Button to start Recording -->
-                <button id="start-recording">Record</button>
-
-        </p>
-    </div>
+    </nav>
+    <!-- WIP To -->
+    
     <script src="./js/scripts.js" type="module"></script>
     <script src="./js/lighting.js" type="module"></script>
     <script src="./js/userInteractions.js" type="module"></script>

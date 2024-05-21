@@ -20,18 +20,28 @@ import {
 
 import * as bootstrap from 'bootstrap';
 
+const offcanvasElement = document.getElementById('offcanvasNavbar');
+// Create a new Offcanvas instance
+const bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
 
-// Event listener to open the side modal
-document.getElementById('open-slideout').addEventListener('click', function(event) {
-    event.preventDefault();
-    document.getElementById('slideout').classList.add('open');
-});
+// To open the offcanvas
+// bsOffcanvas.show();
 
-// Event listener to close the side modal
-document.getElementById('close-slideout').addEventListener('click', function(event) {
-    event.preventDefault();
-    document.getElementById('slideout').classList.remove('open');
-});
+// To close the offcanvas
+// bsOffcanvas.hide();
+
+
+// // Event listener to open the side modal
+// document.getElementById('open-slideout').addEventListener('click', function(event) {
+//     event.preventDefault();
+//     document.getElementById('slideout').classList.add('open');
+// });
+
+// // Event listener to close the side modal
+// document.getElementById('close-slideout').addEventListener('click', function(event) {
+//     event.preventDefault();
+//     document.getElementById('slideout').classList.remove('open');
+// });
 
 // Get camera start position and start lookAt position from main camera (browser view)
 document.getElementById('setStartPositionFromMainCamera').addEventListener('click', function() {
@@ -136,6 +146,7 @@ document.getElementById('createCameraMovement').addEventListener('click', functi
 // Start preview based on the selected camera sequence
 document.getElementById('start-preview').addEventListener('click', function(event) {
     event.preventDefault();
+    bsOffcanvas.hide();
     cleanView();
     startCameraSequence();
 });
@@ -143,6 +154,7 @@ document.getElementById('start-preview').addEventListener('click', function(even
 // Start recording based on the selected camera sequence
 document.getElementById('start-recording').addEventListener('click', function(event) {
     event.preventDefault();
+    bsOffcanvas.hide();
     cleanView();
     enableRecording();
     startCameraSequence();
@@ -161,8 +173,13 @@ function updateCameraSequenceDropdown() {
     });
 }
 
-// Populate the dropdown menu when the slideout opens
-document.getElementById('open-slideout').addEventListener('click', function() {
+// // Populate the dropdown menu when the slideout opens
+// document.getElementById('open-slideout').addEventListener('click', function() {
+//     updateCameraSequenceDropdown();
+// });
+
+// Populate the dropdown menu when Offcanvas is about to show
+offcanvasElement.addEventListener('show.bs.offcanvas', function () {
     updateCameraSequenceDropdown();
 });
 
