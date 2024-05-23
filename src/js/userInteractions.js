@@ -10,6 +10,7 @@ import {
     createCameraMovement,
     cleanView,
     enableRecording,
+    displayCustomCamera,
     objects,
     selectedObject } from './scripts.js';
 
@@ -42,6 +43,11 @@ const bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
 //     event.preventDefault();
 //     document.getElementById('slideout').classList.remove('open');
 // });
+
+// Toggle visibility of the custom camera
+document.getElementById('custom-camera-visibility').addEventListener('change', function() {
+    displayCustomCamera(this.checked);
+});
 
 // Get camera start position and start lookAt position from main camera (browser view)
 document.getElementById('setStartPositionFromMainCamera').addEventListener('click', function() {

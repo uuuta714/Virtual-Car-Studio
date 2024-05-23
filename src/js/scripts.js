@@ -5,7 +5,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
-import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js';
 import { CCapture } from 'ccapture.js-npmfixed';
 import { WebMWriter } from 'webm-writer';
 
@@ -430,38 +429,46 @@ export function getCameraDetails(cam) {
     };
 }
 
+// // GUI Control
+// var gui = new GUI();
 
+// // Function to toggle GUI visibility
+// function toggleGUIVisibility() {
+//     gui.domElement.style.display = (gui.domElement.style.display === 'none' ? '' : 'none');
+// }
 
-// GUI Control
-var gui = new GUI();
+// // Parameters of GUI
+// var params = {
+//     showCustomCameraHelper: false,
+// };
 
-// Function to toggle GUI visibility
-function toggleGUIVisibility() {
-    gui.domElement.style.display = (gui.domElement.style.display === 'none' ? '' : 'none');
+// // Add a toggle in the GUI
+// gui.add(params, 'showCustomCameraHelper').name('Show Custom Camera').onChange(value => {
+//     customCameraHelper.visible = value;
+//     transformControls.visible = value;
+// });
+
+// Function to toggle visibility of the customCameraHelper and transformControl
+export function displayCustomCamera(isChecked) {
+    if (isChecked) {
+        customCameraHelper.visible = true;
+        transformControls.visible = true;
+    } else {
+        customCameraHelper.visible = false;
+        transformControls.visible = false;
+    }
 }
 
-// Parameters of GUI
-var params = {
-    showCustomCameraHelper: false,
-};
-
-// Add a toggle in the GUI
-gui.add(params, 'showCustomCameraHelper').name('Show Custom Camera').onChange(value => {
-    customCameraHelper.visible = value;
-    transformControls.visible = value;
-});
 
 // Function to clean window for video recording
 export function cleanView() {
     customCameraHelper.visible = false;
-    toggleGUIVisibility();
     transformControls.visible = false;
 }
 
 // Function to reset window after video recording
 function resetView() {
-    customCameraHelper.visible = false;
-    toggleGUIVisibility();
+    customCameraHelper.visible = true;
     transformControls.visible = true;
     animate();
 }
