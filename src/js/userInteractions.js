@@ -163,7 +163,7 @@ document.getElementById('start-recording').addEventListener('click', function(ev
 // Function to populate the dropdown menu
 function updateCameraSequenceDropdown() {
     const dropdown = document.getElementById('cameraSequenceDropdown');
-    dropdown.innerHTML = '<option value="">Select a Camera Sequence</option>'; // Clear previous options
+    dropdown.innerHTML = '<option value="">Select a Camera Movement</option>'; // Clear previous options
 
     cameraSequenceOptions.forEach(option => {
         const optionElement = document.createElement('option');
@@ -188,11 +188,21 @@ function updateSequenceListDisplay() {
     const list = document.getElementById('selectedSequenceList');
     list.innerHTML = ''; // Clear existing list items
 
-    selectedCameraSequence.forEach(sequence => {
-        const listItem = document.createElement('li');
-        listItem.textContent = `${sequence.name}`;
-        list.appendChild(listItem);
-    });
+    if (selectedCameraSequence.length === 0) {
+        // Add default message if no sequences are available
+        const noItemsListItem = document.createElement('p');
+        noItemsListItem.classList.add('fw-normal');
+        noItemsListItem.classList.add('m-0');
+        noItemsListItem.textContent = "No camera movement is added in the sequence";
+        list.appendChild(noItemsListItem);
+    } else {
+        selectedCameraSequence.forEach(sequence => {
+            const listItem = document.createElement('li');
+            listItem.classList.add('list-group-item');
+            listItem.textContent = `${sequence.name}`;
+            list.appendChild(listItem);
+        });
+    }
 }
 
 // Event listener for the "Add to Sequence" button
