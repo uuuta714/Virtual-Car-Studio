@@ -10,6 +10,7 @@ import {
     createCameraMovement,
     cleanView,
     enableRecording,
+    displayCustomCamera,
     objects,
     selectedObject } from './scripts.js';
 
@@ -18,17 +19,34 @@ import {
     onDocumentMouseDown
     } from './lighting.js';
 
+import * as bootstrap from 'bootstrap';
 
-// Event listener to open the side modal
-document.getElementById('open-slideout').addEventListener('click', function(event) {
-    event.preventDefault();
-    document.getElementById('slideout').classList.add('open');
-});
+const offcanvasElement = document.getElementById('offcanvasNavbar');
+// Create a new Offcanvas instance
+const bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
 
-// Event listener to close the side modal
-document.getElementById('close-slideout').addEventListener('click', function(event) {
-    event.preventDefault();
-    document.getElementById('slideout').classList.remove('open');
+// To open the offcanvas
+// bsOffcanvas.show();
+
+// To close the offcanvas
+// bsOffcanvas.hide();
+
+
+// // Event listener to open the side modal
+// document.getElementById('open-slideout').addEventListener('click', function(event) {
+//     event.preventDefault();
+//     document.getElementById('slideout').classList.add('open');
+// });
+
+// // Event listener to close the side modal
+// document.getElementById('close-slideout').addEventListener('click', function(event) {
+//     event.preventDefault();
+//     document.getElementById('slideout').classList.remove('open');
+// });
+
+// Toggle visibility of the custom camera
+document.getElementById('custom-camera-visibility').addEventListener('change', function() {
+    displayCustomCamera(this.checked);
 });
 
 // Get camera start position and start lookAt position from main camera (browser view)
@@ -134,6 +152,7 @@ document.getElementById('createCameraMovement').addEventListener('click', functi
 // Start preview based on the selected camera sequence
 document.getElementById('start-preview').addEventListener('click', function(event) {
     event.preventDefault();
+    bsOffcanvas.hide();
     cleanView();
     startCameraSequence();
 });
@@ -141,6 +160,7 @@ document.getElementById('start-preview').addEventListener('click', function(even
 // Start recording based on the selected camera sequence
 document.getElementById('start-recording').addEventListener('click', function(event) {
     event.preventDefault();
+    bsOffcanvas.hide();
     cleanView();
     enableRecording();
     startCameraSequence();
@@ -149,7 +169,7 @@ document.getElementById('start-recording').addEventListener('click', function(ev
 // Function to populate the dropdown menu
 function updateCameraSequenceDropdown() {
     const dropdown = document.getElementById('cameraSequenceDropdown');
-    dropdown.innerHTML = '<option value="">Select a Camera Sequence</option>'; // Clear previous options
+    dropdown.innerHTML = '<option value="">Select a Camera Movement</option>'; // Clear previous options
 
     cameraSequenceOptions.forEach(option => {
         const optionElement = document.createElement('option');
@@ -159,8 +179,13 @@ function updateCameraSequenceDropdown() {
     });
 }
 
-// Populate the dropdown menu when the slideout opens
-document.getElementById('open-slideout').addEventListener('click', function() {
+// // Populate the dropdown menu when the slideout opens
+// document.getElementById('open-slideout').addEventListener('click', function() {
+//     updateCameraSequenceDropdown();
+// });
+
+// Populate the dropdown menu when Offcanvas is about to show
+offcanvasElement.addEventListener('show.bs.offcanvas', function () {
     updateCameraSequenceDropdown();
 });
 
@@ -169,11 +194,21 @@ function updateSequenceListDisplay() {
     const list = document.getElementById('selectedSequenceList');
     list.innerHTML = ''; // Clear existing list items
 
-    selectedCameraSequence.forEach(sequence => {
-        const listItem = document.createElement('li');
-        listItem.textContent = `${sequence.name}`;
-        list.appendChild(listItem);
-    });
+    if (selectedCameraSequence.length === 0) {
+        // Add default message if no sequences are available
+        const noItemsListItem = document.createElement('p');
+        noItemsListItem.classList.add('fw-normal');
+        noItemsListItem.classList.add('m-0');
+        noItemsListItem.textContent = "No camera movement is added in the sequence";
+        list.appendChild(noItemsListItem);
+    } else {
+        selectedCameraSequence.forEach(sequence => {
+            const listItem = document.createElement('li');
+            listItem.classList.add('list-group-item');
+            listItem.textContent = `${sequence.name}`;
+            list.appendChild(listItem);
+        });
+    }
 }
 
 // Event listener for the "Add to Sequence" button

@@ -21,7 +21,7 @@ const mouse = new THREE.Vector2();
 // Function for mouse control
 export function onDocumentMouseDown(event) {
     // Implementation of mouse down interactions
-    const slideOutElement = document.getElementById('rightSlideout');
+    const slideOutElement = document.getElementById('lighting-content');
 
     // Get the bounding rectangle of the slide-out element
     const rect = slideOutElement.getBoundingClientRect();
@@ -202,18 +202,18 @@ function deleteLightInstance() {
 document.addEventListener('mousedown', onDocumentMouseDown);
 document.addEventListener('keydown', onDocumentKeyDown);
 
-// Event listener for opening lighting control slideout
-document.getElementById("openButton").addEventListener("click", openSlideOut);
-document.getElementById("closeButton").addEventListener("click", closeSlideOut);
+// // Event listener for opening lighting control slideout
+// document.getElementById("openButton").addEventListener("click", openSlideOut);
+// document.getElementById("closeButton").addEventListener("click", closeSlideOut);
 
 // Control the lighting control slideout
-export function openSlideOut() {
-    document.getElementById("rightSlideout").style.right = "0";
-}
+// export function openSlideOut() {
+//     document.getElementById("rightSlideout").style.right = "0";
+// }
 
-export function closeSlideOut() {
-    document.getElementById("rightSlideout").style.right = "-250px";
-}
+// export function closeSlideOut() {
+//     document.getElementById("rightSlideout").style.right = "-250px";
+// }
 
 // Event listener for adding light instance
 document.getElementById("addLightButton").addEventListener("click", createLightInstance);
