@@ -12,6 +12,10 @@ import { WebMWriter } from 'webm-writer';
 export const renderer = new THREE.WebGLRenderer({antialias: true});
 //renderer.preserveDrawingBuffer = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.toneMapping = THREE.NeutralToneMapping;
+renderer.toneMappingExposure = 1;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFShadowMap;
 document.body.appendChild(renderer.domElement);
 export const scene = new THREE.Scene();
 const tl = gsap.timeline();
@@ -109,7 +113,6 @@ const rgbeLoader = new RGBELoader();
 
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 4;
 
 //load car model
 let car;
@@ -119,9 +122,18 @@ rgbeLoader.load('./assets/MR_INT-001_NaturalStudio_NAD.hdr', function(texture) {
 
     gltfLoader.load('./assets/scene.gltf', function(gltf) {
         const model = gltf.scene;
+        model.traverse((child) => {
+            child.castShadow = true;
+            child.receiveShadow = true;
+
+            if (child.material) {
+                child.material.envMapIntensity = 0.4;
+            }
+        })
         scene.add(model);
         model.position.y += 0.65;
         car = model;
+        console.log(`Object position: x=${car.position.x}, y=${car.position.y}, z=${car.position.z}`);
     });
 });
 
@@ -140,6 +152,7 @@ gltfLoader.load('./assets/studio_light/scene.gltf', function(gltf) {
                 material.emissive.set(new THREE.Color(0xffffff));
                 material.needsUpdate = true;
                 const pointLight = new THREE.PointLight( new THREE.Color(0xffffff), 3 );
+                pointLight.castShadow = true;
                 child.add( pointLight );
                 pointLight.name = pointLight;
                 }				
@@ -174,6 +187,7 @@ let topLight;
 					// spotLight.decay = 2;
                     // spotLight.angle = Math.PI/6;
 					// spotLight.penumbra = 1;
+                    directionalLight.castShadow = true;
                     child.add( directionalLight );
                     directionalLight.name = directionalLight;
                   }
@@ -451,3 +465,55 @@ function resetView() {
     transformControls.visible = true;
     animate();
 }
+
+// ambient
+new RGBELoader().load('./assets/studio.hdr', (environmentMap) => {
+    environmentMap.mapping = THREE.EquirectangularReflectionMapping;
+    scene.background = environmentMap;
+    scene.environment = environmentMap;
+});
+
+// floor
+
+// Load the floor texture
+const textureLoader = new THREE.TextureLoader();
+// Load the textures
+const colorTexture = textureLoader.load(
+"./assets/asphalt/Asphalt025C_2K-JPG_Color.jpg"
+);
+const displacementTexture = textureLoader.load(
+"./assets/asphalt/Asphalt025C_2K-JPG_Displacement.jpg"
+);
+const normalTexture = textureLoader.load(
+"./assets/asphalt/Asphalt025C_2K-JPG_NormalGL.jpg"
+);
+const roughnessTexture = textureLoader.load(
+    "./assets/asphalt/Asphalt025C_2K-JPG_Roughness.jpg"
+  );
+const aoTexture = textureLoader.load(
+"./assets/asphalt/Asphalt025C_2K-JPG_AmbientOcclusion.jpg"
+);
+
+
+// Set texture parameters
+colorTexture.wrapS = colorTexture.wrapT = THREE.RepeatWrapping;
+displacementTexture.wrapS = displacementTexture.wrapT = THREE.RepeatWrapping;
+normalTexture.wrapS = normalTexture.wrapT = THREE.RepeatWrapping;
+aoTexture.wrapS = aoTexture.wrapT = THREE.RepeatWrapping;
+
+// Create the floor plane
+const floorGeometry = new THREE.PlaneGeometry(20, 20);
+const floorMaterial = new THREE.MeshStandardMaterial({ 
+    map: colorTexture,
+    displacementMap: displacementTexture,
+    normalMap: normalTexture,
+    roughnessMap: roughnessTexture,
+    aoMap: aoTexture,
+    displacementScale: 0,
+    side: THREE.DoubleSide,
+});
+
+const floorMesh = new THREE.Mesh(floorGeometry, floorMaterial);
+floorMesh.rotation.x = -Math.PI / 2; // Rotate to lay flat
+floorMesh.position.y = 0;
+scene.add(floorMesh);
