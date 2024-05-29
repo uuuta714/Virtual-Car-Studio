@@ -833,15 +833,15 @@ export function displayCustomCamera(isChecked) {
 // });
 
 // Function to toggle visibility of the customCameraHelper and transformControl
-export function displayCustomCamera(isChecked) {
-    if (isChecked) {
-        customCameraHelper.visible = true;
-        transformControls.visible = true;
-    } else {
-        customCameraHelper.visible = false;
-        transformControls.visible = false;
-    }
-}
+// export function displayCustomCamera(isChecked) {
+//     if (isChecked) {
+//         customCameraHelper.visible = true;
+//         transformControls.visible = true;
+//     } else {
+//         customCameraHelper.visible = false;
+//         transformControls.visible = false;
+//     }
+// }
 
 
 // Function to clean window for video recording
