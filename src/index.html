@@ -26,7 +26,10 @@
                 <!-- Tabs -->
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="lighting-tab" data-bs-toggle="tab" data-bs-target="#lighting-tab-pane" type="button" role="tab" aria-controls="lighting-tab-pane" aria-selected="true">Lighting</button>
+                    <button class="nav-link active" id="env-tab" data-bs-toggle="tab" data-bs-target="#env-tab-pane" type="button" role="tab" aria-controls="env-tab-pane" aria-selected="true">Environment</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="lighting-tab" data-bs-toggle="tab" data-bs-target="#lighting-tab-pane" type="button" role="tab" aria-controls="lighting-tab-pane" aria-selected="true">Lighting</button>
                     </li>
                     <li class="nav-item" role="presentation">
                     <button class="nav-link" id="camera-tab" data-bs-toggle="tab" data-bs-target="#camera-tab-pane" type="button" role="tab" aria-controls="camera-tab-pane" aria-selected="false">Camera</button>
@@ -36,8 +39,24 @@
                     </li>
                 </ul>
                 <div class="tab-content" id="myTabContent">
+                    <!-- Environment -->
+                    <div class="tab-pane fade show active" id="env-tab-pane" role="tabpanel" aria-labelledby="env-tab" tabindex="0">
+                        <div id="env-content">
+                            <p class="fs-4 my-4">Choose Environment</p>
+                            <button id="snow" class="btn btn-secondary btn-lg">Snow</button>
+                            <button id="beach" class="btn btn-secondary btn-lg">Beach</button>
+                            <button id="studioButton" class="btn btn-secondary btn-lg">Studio</button>
+                            <div class="tab-pane fade" id="studio" role="tabpanel" aria-labelledby="studio-tab">
+                                <div class="d-grid gap-2">
+                                    <p class="fs-4 my-4">Set Up Studio Environment</p>
+                                    <button id="defaultLight" class="btn btn-secondary">Default studio lighting</button>
+                                    <button id="customLight" class="btn btn-secondary">Customise studio lighting</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Lighting -->
-                    <div class="tab-pane fade show active" id="lighting-tab-pane" role="tabpanel" aria-labelledby="lighting-tab" tabindex="0">
+                    <div class="tab-pane fade" id="lighting-tab-pane" role="tabpanel" aria-labelledby="lighting-tab" tabindex="0">
                         <div id="lighting-content">
                             <p class="fs-4 my-4">Set Up Lighting Environment</p>
                             <ul class="list-unstyled my-4">

@@ -3,6 +3,7 @@ import { Vector3 } from 'three'
 import { gsap } from 'gsap';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js'
+import { GroundedSkybox } from 'three/examples/jsm/objects/GroundedSkybox.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import { CCapture } from 'ccapture.js-npmfixed';
@@ -28,7 +29,7 @@ export const camera = new THREE.PerspectiveCamera(
     45,
     window.innerWidth / window.innerHeight,
     0.01,
-    50
+    1000
 );
 
 // Orbit Controls
@@ -132,7 +133,6 @@ rgbeLoader.load('./assets/MR_INT-001_NaturalStudio_NAD.hdr', function(texture) {
         scene.add(model);
         model.position.y += 0.65;
         car = model;
-        console.log(`Object position: x=${car.position.x}, y=${car.position.y}, z=${car.position.z}`);
     });
 });
 
@@ -473,12 +473,104 @@ function resetView() {
     animate();
 }
 
-// ambient
-new RGBELoader().load('./assets/studio.hdr', (environmentMap) => {
-    environmentMap.mapping = THREE.EquirectangularReflectionMapping;
-    scene.background = environmentMap;
-    scene.environment = environmentMap;
+// environment set up
+let envMap;
+
+const params = {
+    height: 15,
+    radius: 100,
+    enabled: true,
+};
+
+let skybox;
+
+// // load snow env
+// new RGBELoader().load('./assets/snow/birchwood_1k.hdr', (hdrMap) => {
+//     hdrMap.mapping = THREE.EquirectangularReflectionMapping;
+//     envMap = hdrMap;
+//     skybox = new GroundedSkybox( envMap, params.height, params.radius );
+//     skybox.position.y = params.height - 0.01;
+//     scene.add( skybox );
+//     scene.environment = envMap;
+//     scene.background = null;
+// });
+
+// load snow/beach env 
+function loadEnvironmentMap(path) {
+    new RGBELoader().load(path, (hdrMap) => {
+        hdrMap.mapping = THREE.EquirectangularReflectionMapping;
+        envMap = hdrMap;
+
+        if (skybox) {
+            scene.remove(skybox);
+        }
+
+        skybox = new GroundedSkybox(envMap, params.height, params.radius);
+        skybox.position.y = params.height - 0.01;
+        scene.add(skybox);
+
+        scene.environment = envMap;
+        scene.background = null;
+    });
+}
+
+// load studio env
+
+// const SCENE_COLOR = 0x000000;
+// this.renderer.setClearColor(SCENE_COLOR, 1);
+// new RGBELoader().load('./assets/studio/studio_small_08_1k.hdr', (hdrMap) => {
+//     hdrMap.mapping = THREE.EquirectangularReflectionMapping;
+//     envMap = hdrMap;
+//     // skybox = new GroundedSkybox( envMap, params.height, params.radius );
+//     // skybox.position.y = params.height - 0.01;
+//     // scene.add( skybox );
+//     scene.environment = envMap;
+//     // scene.background = null;
+// });
+
+function loadStudiotMap() {
+    scene.environment = null;
+    scene.background = null;
+    const SCENE_COLOR = 0x000000;
+    scene.background = new THREE.Color(SCENE_COLOR);
+    if (skybox) {
+        scene.remove(skybox);
+    }
+    new RGBELoader().load('./assets/studio/studio_small_08_1k.hdr', (hdrMap) => {
+        hdrMap.mapping = THREE.EquirectangularReflectionMapping;
+        envMap = hdrMap;
+        scene.background = new THREE.Color(0x000000);
+        scene.environment = envMap;
+    });
+}
+
+// default to be studio env
+loadStudiotMap();
+
+
+document.getElementById('snow').addEventListener('click', () => {
+    loadEnvironmentMap('./assets/snow/birchwood_1k.hdr');
+    document.getElementById('studio').classList.remove('show');
 });
+
+document.getElementById('beach').addEventListener('click', () => {
+    loadEnvironmentMap('./assets/sunrise/blouberg_sunrise_2_1k.hdr');
+    document.getElementById('studio').classList.remove('show');
+});
+
+document.getElementById('studioButton').addEventListener('click', () => {
+    loadStudiotMap();
+    document.getElementById('studio').classList.add('show');
+});
+
+document.getElementById("defaultLight").addEventListener("click", function() {
+    loadStudiotMap();
+  });
+
+document.getElementById("customLight").addEventListener("click", function() {
+    scene.environment = null;
+    scene.background = new THREE.Color(0x000000);
+  });
 
 // floor
 
@@ -523,4 +615,4 @@ const floorMaterial = new THREE.MeshStandardMaterial({
 const floorMesh = new THREE.Mesh(floorGeometry, floorMaterial);
 floorMesh.rotation.x = -Math.PI / 2; // Rotate to lay flat
 floorMesh.position.y = 0;
-scene.add(floorMesh);
+// scene.add(floorMesh);

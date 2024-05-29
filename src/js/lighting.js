@@ -172,7 +172,15 @@ let studioLightCount = 0;
 function createLightInstance() {
     // Clone the model to create a new instance
 	const model = objects["studioLight"].model;
-    const newModel = model.clone();
+    // const newModel = model.clone();
+
+    const newModel = model.clone(true);
+    newModel.traverse((node) => {
+        if (node.isMesh) {
+            node.material = node.material.clone();
+        }
+    });
+        
     studioLightCount++;
 	newModel.name = "studiolight" + studioLightCount;
     // Adjust position, scale, or any other properties if needed
