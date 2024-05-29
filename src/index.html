@@ -47,9 +47,17 @@
                                 <li class="fw-normal"><em>- Arrow Keys: Move selected object</em></li>
                                 <li class="fw-normal"><em>- 'L' Key: Rotate selected object anti-clockwise</em></li>
                             </ul>
-                            <p class="fs-5 my-3">Add / Remove Light Instance</p>
+                            <p class="fs-5 my-3">Select Light Instance</p>
+                            <div class="row">
+                                <div class="col">
+                                    <select class="form-select" id="lightInstanceDropdown">
+                                        <option value="">Select a Light Instance</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <p class="fs-5 my-3">Clone / Remove Light Instance</p>
                             <div class="d-grid gap-2">
-                                <button id="addLightButton" class="btn btn-secondary">Add</button>
+                                <button id="addLightButton" class="btn btn-secondary">Clone</button>
                                 <button id = "deleteLightButton" class="btn btn-danger">Remove</button>
                             </div> 
                             <br>

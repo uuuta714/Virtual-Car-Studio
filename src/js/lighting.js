@@ -14,18 +14,27 @@ import {
 
 // Event listener for applying intensity and color change
 document.getElementById("applyIntensityButton").addEventListener("click", function() {
-    applyIntensityChange(selectedIndex);
+    const selectedLightIndex = parseInt(document.getElementById('lightInstanceDropdown').value);
+    applyIntensityChange(selectedLightIndex);
 });
 document.getElementById("applyColorButton").addEventListener("click", function() {
-    applyColorChange(selectedIndex);
+    const selectedLightIndex = parseInt(document.getElementById('lightInstanceDropdown').value);
+    applyColorChange(selectedLightIndex);
 });
 // Event listener for deleting light instance
 document.getElementById("deleteLightButton").addEventListener("click", function() {
-    deleteLightInstance();
+    const selectedLightIndex = parseInt(document.getElementById('lightInstanceDropdown').value);
+    deleteLightInstance(selectedLightIndex);
+    updateStudioLightDropdown();
 });
 // Event listener for adding light instance
 document.getElementById("addLightButton").addEventListener("click", function() {
+    const selectedLightIndex = parseInt(document.getElementById('lightInstanceDropdown').value);
+    console.log(selectedLightIndex)
+    selectedIndex = selectedLightIndex;
+    console.log(selectedIndex)
     createLightInstance();
+    updateStudioLightDropdown();
 });
 
 // // import {
@@ -188,11 +197,17 @@ document.getElementById("addLightButton").addEventListener("click", function() {
 //   object.box.setFromObject(object.model);  // Update the bounding box
 // }
 
+let cloneCounter = 1;
 // Define a function to create new instance of the light
 function createLightInstance() {
-    console.log("createLightInstance is called");
     // Clone the model to create a new instance
-	const model = modelGroups.find(group => group.name === 'studio_light');
+    let model;
+    if (modelGroups[selectedIndex].name.startsWith('studio_light')) {
+        model = modelGroups[selectedIndex];
+    } else {
+        model = modelGroups.find(group => group.name.startsWith('studio_light'));
+    }
+	
     model.rotation.set(0,0,0);
     const newModel = model.clone(true);
     newModel.traverse((node) => {
@@ -201,7 +216,7 @@ function createLightInstance() {
         }
     });
 
-	newModel.name = "studio_light";
+	newModel.name = "studio_light " + cloneCounter++;
     // Adjust position, scale, or any other properties if needed
     // For example:
     newModel.position.set(1, 0, -5);
@@ -235,13 +250,13 @@ function createLightInstance() {
 }
 
 // Function to delete the selected light instance
-function deleteLightInstance() {
-    if (modelGroups[selectedIndex].name = 'studio_light') {
-        scene.remove(modelGroups[selectedIndex]);
-        modelGroups.splice(selectedIndex, 1);
-        sceneMeshes.splice(selectedIndex, 1);
-        boxHelpers.splice(selectedIndex, 1);
-        modelDragBoxes.splice(selectedIndex, 1);
+function deleteLightInstance(index) {
+    if (modelGroups[index].name.startsWith('studio_light')) {
+        scene.remove(modelGroups[index]);
+        modelGroups.splice(index, 1);
+        sceneMeshes.splice(index, 1);
+        boxHelpers.splice(index, 1);
+        modelDragBoxes.splice(index, 1);
         selectedIndex = null;
     }
 }
@@ -267,11 +282,11 @@ function deleteLightInstance() {
 
 
 // Function to apply intensity change - Updated
-function applyIntensityChange(selectedIndex) {
-    if (modelGroups[selectedIndex].name = 'studio_light') {
+function applyIntensityChange(index) {
+    if (modelGroups[index].name.startsWith('studio_light')) {
         const intensityInput = document.getElementById("intensityInput");
         const intensity = parseFloat(intensityInput.value);
-        modelGroups[selectedIndex].traverse((child) => {
+        modelGroups[index].traverse((child) => {
             if (child.isMesh) {
                 if (child.name == "Object_7") {
                     const pointLight = child.children[0];
@@ -285,11 +300,11 @@ function applyIntensityChange(selectedIndex) {
 }
 
 // Function to apply color change - Updated
-function applyColorChange(selectedIndex) {
-    if (modelGroups[selectedIndex].name = 'studio_light') {
+function applyColorChange(index) {
+    if (modelGroups[index].name.startsWith('studio_light')) {
         const colorPicker = document.getElementById("colorPicker");
         const color = new THREE.Color(colorPicker.value);
-        modelGroups[selectedIndex].traverse((child) => {
+        modelGroups[index].traverse((child) => {
             if (child.isMesh) {
                 if (child.name == "Object_7") {
                     const pointLight = child.children[0];
@@ -300,4 +315,19 @@ function applyColorChange(selectedIndex) {
             }
         })
     }
+}
+
+// Function to populate the studio light dropdown menu
+export function updateStudioLightDropdown() {
+    const dropdown = document.getElementById('lightInstanceDropdown');
+    dropdown.innerHTML = '<option value="">Select a Light Instance</option>'; // Clear previous options
+
+    modelGroups.forEach((modelGroup, index) => {
+        if (modelGroup.name.startsWith('studio_light')) {
+            const optionElement = document.createElement('option');
+            optionElement.value = index;
+            optionElement.textContent = modelGroup.name;
+            dropdown.appendChild(optionElement);
+        }
+    });
 }

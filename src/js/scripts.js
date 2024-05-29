@@ -563,9 +563,9 @@ function animate() {
                 modelGroups[index].rotation.y = dragBox.rotation.y; 
                 boxHelpers[index].update();
             }
-            if (selectedIndex != null) {
-                console.log(selectedIndex + " : " + modelGroups[selectedIndex].name);
-            }
+            // if (selectedIndex != null) {
+            //     console.log(selectedIndex + " : " + modelGroups[selectedIndex].name);
+            // }
         });
         renderer.render(scene, camera);
     }

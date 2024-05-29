@@ -15,8 +15,7 @@ import {
     selectedObject } from './scripts.js';
 
 import {
-    onDocumentKeyDown,
-    onDocumentMouseDown
+    updateStudioLightDropdown
     } from './lighting.js';
 
 import * as bootstrap from 'bootstrap';
@@ -187,6 +186,7 @@ function updateCameraSequenceDropdown() {
 // Populate the dropdown menu when Offcanvas is about to show
 offcanvasElement.addEventListener('show.bs.offcanvas', function () {
     updateCameraSequenceDropdown();
+    updateStudioLightDropdown();
 });
 
 // Function to update the display of selected sequences
