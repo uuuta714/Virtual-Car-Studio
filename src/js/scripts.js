@@ -7,6 +7,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import { CCapture } from 'ccapture.js-npmfixed';
 import { WebMWriter } from 'webm-writer';
+import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
 
 export const renderer = new THREE.WebGLRenderer({antialias: true});
 //renderer.preserveDrawingBuffer = true;
@@ -106,100 +107,466 @@ export function enableRecording() {
 const gltfLoader = new GLTFLoader();
 const rgbeLoader = new RGBELoader();
 
+// Load models using GLTFLoader - with dragcontrols
+export var selectedIndex;
+export const sceneMeshes = [];
+export const boxHelpers = [];
+export const modelGroups = [];
+export const modelDragBoxes = [];
+
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 4;
 
 //load car model
-let car;
-rgbeLoader.load('./assets/MR_INT-001_NaturalStudio_NAD.hdr', function(texture) {
+//let car;
+rgbeLoader.load('./assets/MR_INT-001_NaturalStudio_NAD.hdr',
+function(texture) {
     // texture.mapping = THREE.EquirectangularReflectionMapping;
     // scene.environment = texture;
 
-    gltfLoader.load('./assets/scene.gltf', function(gltf) {
-        const model = gltf.scene;
-        scene.add(model);
-        model.position.y += 0.65;
-        car = model;
-    });
-});
-
-
-export let objects = {};
-export var selectedObject = null;
-// load studio light
-let light;
-gltfLoader.load('./assets/studio_light/scene.gltf', function(gltf) {
-    const model = gltf.scene;
-    model.name = "studioLight";
-    model.traverse(function (child) {
-        if (child.isMesh) {
-            if (child.name == 'Object_7') {
-                var material = child.material;
-                material.emissive.set(new THREE.Color(0xffffff));
-                material.needsUpdate = true;
-                const pointLight = new THREE.PointLight( new THREE.Color(0xffffff), 3 );
-                child.add( pointLight );
-                pointLight.name = pointLight;
-                }				
-        }
+    gltfLoader.load('./assets/scene.gltf',
+    function (gltf) {
+        let modelGroup = new THREE.Group();
+        modelGroup.name = 'car';
+        gltf.scene.traverse(function (child) {
+          if (child instanceof THREE.Group) {
+            modelGroup.add(child);
+          }  
+          if (child.isMesh) {
+            child.castShadow = true;
+          }
         });
+        
+        modelGroup.position.y += 0.65;
+        scene.add(modelGroup);
+        
+        // Compute the bounding box to get size
+        const boundingBox = new THREE.Box3().setFromObject(modelGroup);
+        const size = new THREE.Vector3();
+        boundingBox.getSize(size);
 
-    model.position.set(0,0,-5);
-    model.scale.set(0.3,0.15,0.2);
-    scene.add(model);
-    
-    const box = new THREE.Box3().setFromObject(model);
-    const helper = new THREE.Box3Helper(box, 0xffff00);
-    helper.visible = false;
-    scene.add(helper);
-
-    objects[model.name] = {
-    model: model,
-    box: box,
-    helper: helper
-    };
+        // Create BoxGeometry based on the computed size
+        const modelDragBox = new THREE.Mesh(
+            new THREE.BoxGeometry(size.x, size.y, size.z),
+            new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 })
+        );
+        modelDragBox.position.copy(modelGroup.position);
+        modelDragBox.userData.originalY = modelDragBox.position.y += size.y / 2
+        scene.add(modelDragBox);
+        
+        const boxHelper = new THREE.BoxHelper(modelDragBox, 0xffff00);
+        boxHelper.visible = false;
+        
+        scene.add(boxHelper);
+        
+        modelGroups.push(modelGroup)
+        sceneMeshes.push(modelDragBox);
+        modelDragBoxes.push(modelDragBox);
+        boxHelpers.push(boxHelper);
+        },
+        function (error) {
+            console.log(error);
+        }
+    );
 });
+
+
+// export let objects = {};
+// export var selectedObject = null;
+
+// load studio light
+gltfLoader.load(
+'./assets/studio_light/scene.gltf',
+    function (gltf) {
+    let modelGroup = new THREE.Group();
+    modelGroup.name = 'studio_light';
+    gltf.scene.traverse(function (child) {
+        if (child instanceof THREE.Group) {
+            modelGroup.add(child);
+        }  
+        if (child.isMesh) {
+            child.castShadow = true;
+        }
+        if (child.name == 'Object_7') {
+            var material = child.material;
+            material.emissive.set(new THREE.Color(0xffffff));
+            material.needsUpdate = true;
+            const pointLight = new THREE.PointLight( new THREE.Color(0xffffff), 3 );
+            child.add( pointLight );
+            pointLight.name = pointLight;
+        }
+    });
+    
+    modelGroup.position.set(0,0,-5);
+    modelGroup.scale.set(0.3,0.15,0.2);
+    scene.add(modelGroup);
+    
+    // Compute the bounding box to get size
+    const boundingBox = new THREE.Box3().setFromObject(modelGroup);
+    const size = new THREE.Vector3();
+    boundingBox.getSize(size);
+
+    // Create BoxGeometry based on the computed size
+    const modelDragBox = new THREE.Mesh(
+        new THREE.BoxGeometry(size.x, size.y, size.z),
+        new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 })
+    );
+    modelDragBox.position.copy(modelGroup.position);
+    modelDragBox.userData.originalY = modelDragBox.position.y += size.y / 2
+    scene.add(modelDragBox);
+    
+    const boxHelper = new THREE.BoxHelper(modelDragBox, 0xffff00);
+    boxHelper.visible = false;
+    
+    scene.add(boxHelper);
+    
+    modelGroups.push(modelGroup)
+    sceneMeshes.push(modelDragBox);
+    modelDragBoxes.push(modelDragBox);
+    boxHelpers.push(boxHelper);
+    },
+    function (error) {
+        console.log(error);
+    }
+);
+
+
+// Original code to load studio light ---------------------------
+// let light;
+// gltfLoader.load('./assets/studio_light/scene.gltf', function(gltf) {
+//     const model = gltf.scene;
+//     model.name = "studioLight";
+//     model.traverse(function (child) {
+//         if (child.isMesh) {
+//             if (child.name == 'Object_7') {
+//                 var material = child.material;
+//                 material.emissive.set(new THREE.Color(0xffffff));
+//                 material.needsUpdate = true;
+//                 const pointLight = new THREE.PointLight( new THREE.Color(0xffffff), 3 );
+//                 child.add( pointLight );
+//                 pointLight.name = pointLight;
+//                 }				
+//         }
+//         });
+
+//     model.position.set(0,0,-5);
+//     model.scale.set(0.3,0.15,0.2);
+//     scene.add(model);
+    
+//     const box = new THREE.Box3().setFromObject(model);
+//     const helper = new THREE.Box3Helper(box, 0xffff00);
+//     helper.visible = false;
+//     scene.add(helper);
+
+//     objects[model.name] = {
+//     model: model,
+//     box: box,
+//     helper: helper
+//     };
+// });
+
+// --------------------------------------------------------------
+
 
 // top light
-let topLight;
-    gltfLoader.load('./assets/top_light/scene.gltf', function(gltf) {
-        const model = gltf.scene;
-		model.name = "topLight";
-        model.traverse(function (child) {
+gltfLoader.load(
+    './assets/top_light/scene.gltf',
+        function (gltf) {
+        let modelGroup = new THREE.Group();
+        modelGroup.name = 'top_light';
+        gltf.scene.traverse(function (child) {
+            if (child instanceof THREE.Group) {
+                modelGroup.add(child);
+            }  
             if (child.isMesh) {
-                if (child.name == 'L1_L1_BODY_0') {
-                    const directionalLight = new THREE.DirectionalLight( new THREE.Color(255,218,185), 0.001);
-					// spotLight.decay = 2;
-                    // spotLight.angle = Math.PI/6;
-					// spotLight.penumbra = 1;
-                    child.add( directionalLight );
-                    directionalLight.name = directionalLight;
-                  }
-            child.castShadow = true;
+                child.castShadow = true;
             }
-          });
+            if (child.name == 'L1_L1_BODY_0') {
+                const directionalLight = new THREE.DirectionalLight( new THREE.Color(255,218,185), 0.001);
+                // spotLight.decay = 2;
+                // spotLight.angle = Math.PI/6;
+                // spotLight.penumbra = 1;
+                child.add( directionalLight );
+                directionalLight.name = directionalLight;
+            }
+        });
+        
+        modelGroup.position.set(-0.1,3.6,-1);
+        //modelGroup.position.set(-0.3,3.6,-0.5);
+        modelGroup.scale.set(3,1.5,5);
+        //modelGroup.rotation.y += 90 * Math.PI / 180;
+        scene.add(modelGroup);
+        
+        // Compute the bounding box to get size
+        const boundingBox = new THREE.Box3().setFromObject(modelGroup);
+        const size = new THREE.Vector3();
+        boundingBox.getSize(size);
+    
+        // Create BoxGeometry based on the computed size
+        const modelDragBox = new THREE.Mesh(
+            new THREE.BoxGeometry(size.x, size.y, size.z),
+            new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 })
+        );
+        modelDragBox.position.copy(modelGroup.position);
+        modelDragBox.userData.originalY = modelDragBox.position.y += size.y / 2
+        // modelDragBox.rotation.y += 90 * Math.PI / 180;
+        scene.add(modelDragBox);
+        
+        const boxHelper = new THREE.BoxHelper(modelDragBox, 0xffff00);
+        boxHelper.visible = false;
+        
+        scene.add(boxHelper);
+        
+        modelGroups.push(modelGroup)
+        sceneMeshes.push(modelDragBox);
+        modelDragBoxes.push(modelDragBox);
+        boxHelpers.push(boxHelper);
+        },
+        function (error) {
+            console.log(error);
+        }
+    );
 
-		model.position.set(-0.3,3.6,-0.5);
-        model.scale.set(3,1.5,5);
-		model.rotation.set(0,90 * Math.PI / 180,0);
-		scene.add(model);
 
-		const box = new THREE.Box3().setFromObject(model);
-		const helper = new THREE.Box3Helper(box, 0xffff00);
-		helper.visible = false;
-		scene.add(helper);
+// Original code to load top light ---------------------------
+// let topLight;
+//     gltfLoader.load('./assets/top_light/scene.gltf', function(gltf) {
+//         const model = gltf.scene;
+// 		model.name = "topLight";
+//         model.traverse(function (child) {
+//             if (child.isMesh) {
+//                 if (child.name == 'L1_L1_BODY_0') {
+//                     const directionalLight = new THREE.DirectionalLight( new THREE.Color(255,218,185), 0.001);
+// 					// spotLight.decay = 2;
+//                     // spotLight.angle = Math.PI/6;
+// 					// spotLight.penumbra = 1;
+//                     child.add( directionalLight );
+//                     directionalLight.name = directionalLight;
+//                   }
+//             child.castShadow = true;
+//             }
+//           });
 
-		objects[model.name] = {
-		model: model,
-		box: box,
-		helper: helper
-		};
-    });
+// 		model.position.set(-0.3,3.6,-0.5);
+//         model.scale.set(3,1.5,5);
+// 		model.rotation.set(0,90 * Math.PI / 180,0);
+// 		scene.add(model);
+
+// 		const box = new THREE.Box3().setFromObject(model);
+// 		const helper = new THREE.Box3Helper(box, 0xffff00);
+// 		helper.visible = false;
+// 		scene.add(helper);
+
+// 		objects[model.name] = {
+// 		model: model,
+// 		box: box,
+// 		helper: helper
+// 		};
+//     });
+// --------------------------------------------------------------
+
+
+// Function to update bounding box for collision detection
+function updateBoundingBox(boxHelper, modelDragBox) {
+    modelDragBox.geometry.computeBoundingBox();
+    modelDragBox.updateMatrixWorld();
+    boxHelper.update();
+}
+
+// Function to check collision between objects
+function checkCollision(currentIndex) {
+    const currentBox = modelDragBoxes[currentIndex].geometry.boundingBox.clone();
+    currentBox.applyMatrix4(modelDragBoxes[currentIndex].matrixWorld);
+
+    for (let i = 0; i < modelDragBoxes.length; i++) {
+        if (i !== currentIndex) {
+            const otherBox = modelDragBoxes[i].geometry.boundingBox.clone();
+            otherBox.applyMatrix4(modelDragBoxes[i].matrixWorld);
+
+            if (currentBox.intersectsBox(otherBox)) {
+                console.log(`Collision detected between model ${currentIndex} and model ${i}`);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
+// Define Dragcontrol actions
+const dragControls = new DragControls(sceneMeshes, camera, renderer.domElement);
+
+dragControls.addEventListener('hoveron', function (event) {
+    const index = sceneMeshes.indexOf(event.object);
+    if (index !== -1 && modelGroups[index].name != 'car') {
+        boxHelpers[index].visible = true;
+        orbitControls.enabled = false;
+    }
+});
+
+dragControls.addEventListener('hoveroff', function (event) {
+    const index = sceneMeshes.indexOf(event.object);
+    if (index !== -1 && modelGroups[index].name != 'car') {
+        boxHelpers[index].visible = false;
+        orbitControls.enabled = true;
+    }
+});
+
+dragControls.addEventListener('dragstart', function (event) {
+    const index = selectedIndex = sceneMeshes.indexOf(event.object);
+    if (index !== -1 && modelGroups[index].name != 'car') {
+        boxHelpers[index].visible = true;
+        orbitControls.enabled = false;
+        event.object.userData.lastGoodPosition = event.object.position.clone();
+        event.object.userData.lastGoodEuler = event.object.rotation.clone();
+    }
+});
+
+dragControls.addEventListener('drag', function (event) {
+    const index = sceneMeshes.indexOf(event.object);
+    if (index !== -1 && modelGroups[index].name != 'car') {
+        let originalY = event.object.userData.originalY;
+        event.object.position.y = originalY
+        let step = 0.05; // Incremental step for interpolation, adjust as needed
+        let currentPosition = event.object.position.clone();
+        let lastNonCollidingPosition = event.object.userData.lastGoodPosition.clone();
+        while (step <= 1.0) {
+            // Interpolate between the last known good position and the current dragged position
+            let interpolatedPosition = lastNonCollidingPosition.clone().lerp(currentPosition, step);
+            event.object.position.copy(interpolatedPosition);
+            updateBoundingBox(boxHelpers[index], modelDragBoxes[index]);
+
+            if (checkCollision(index)) {
+                // If a collision is detected, break and use the last non-colliding position
+                event.object.position.copy(lastNonCollidingPosition);
+                break;
+            } else {
+                // Update last non-colliding position to the current interpolated position
+                lastNonCollidingPosition.copy(interpolatedPosition);
+                step += 0.05; // Increase the step to move closer to the current position
+            }
+        }
+        // Ensure the final position in this frame does not cause collision
+        event.object.position.copy(lastNonCollidingPosition);
+        event.object.userData.lastGoodPosition = lastNonCollidingPosition.clone();
+    }
+});
+
+dragControls.addEventListener('dragend', function (event) {
+    const index = sceneMeshes.indexOf(event.object);
+    if (index !== -1 && modelGroups[index].name != 'car') {
+        boxHelpers[index].visible = false;
+        orbitControls.enabled = true;
+    }
+});
+
+
+// Keydown event for objects transformation and rotation
+document.addEventListener('keydown', onDocumentKeyDown);
+
+function onDocumentKeyDown(event) {
+    // Implementation of key down interactions
+    if (selectedIndex !== null && modelGroups[selectedIndex].name !== 'car') {
+        switch (event.key) {
+            case "ArrowRight":
+                moveObject(selectedIndex, 'right');
+                break;
+            case "ArrowLeft":
+                moveObject(selectedIndex, 'left');
+                break;
+            case "ArrowUp":
+                moveObject(selectedIndex, 'forward');
+                break;
+            case "ArrowDown":
+                moveObject(selectedIndex, 'backward');
+                break;
+            case "Escape":
+                selectedIndex = null;
+                console.log("deselected");
+                break;
+            case "l":
+                rotateObject(selectedIndex, 4);
+                break;
+        }
+    } else {
+        console.log("Object is not selected");
+    }
+}
+
+function moveObject(index, direction) {
+    const distance = 0.25; // Distance to move in each step, adjust as needed
+    let currentPosition = modelDragBoxes[index].position.clone();
+    let lastNonCollidingPosition = modelDragBoxes[index].userData.lastGoodPosition.clone();
+    switch (direction) {
+        case 'left':
+        if (checkCollision(index)) {
+            modelDragBoxes[index].position.copy(lastNonCollidingPosition);
+            break;
+        } else {
+            modelDragBoxes[index].position.x += distance;
+            modelDragBoxes[index].userData.lastGoodPosition = modelDragBoxes[index].position.clone();
+            break;
+        }
+        case 'right':
+        if (checkCollision(index)) {
+            modelDragBoxes[index].position.copy(lastNonCollidingPosition);
+            break;
+        } else {
+            modelDragBoxes[index].position.x -= distance;
+            modelDragBoxes[index].userData.lastGoodPosition = modelDragBoxes[index].position.clone();
+            break
+        }
+        case 'backward':
+        if (checkCollision(index)) {
+            modelDragBoxes[index].position.copy(lastNonCollidingPosition);
+            break;
+        } else {
+            modelDragBoxes[index].position.z -= distance;
+            modelDragBoxes[index].userData.lastGoodPosition = modelDragBoxes[index].position.clone();
+            break
+        }
+        case 'forward':
+        if (checkCollision(index)) {
+            modelDragBoxes[index].position.copy(lastNonCollidingPosition);
+            break;
+        } else {
+            modelDragBoxes[index].position.z += distance;
+            modelDragBoxes[index].userData.lastGoodPosition = modelDragBoxes[index].position.clone();
+            break
+        }
+    }
+}
+
+function rotateObject(index, angleInDegrees) {
+    const angleInRadians = angleInDegrees * Math.PI / 180;
+    let currentEuler = modelDragBoxes[index].rotation.clone();
+    let lastNonCollidingEuler = modelDragBoxes[index].userData.lastGoodEuler.clone();
+
+    if (checkCollision(index)) {
+    modelDragBoxes[index].rotation.copy(lastNonCollidingEuler);
+    } else {
+    modelDragBoxes[index].rotation.y += angleInRadians;  // Rotate around the y-axis
+    currentEuler = modelDragBoxes[index].rotation
+    modelDragBoxes[index].userData.lastGoodEuler = modelDragBoxes[index].rotation.clone();
+    }
+}
+
 
 function animate() {
     if (!isRecording) {
         requestAnimationFrame(animate);
+        modelDragBoxes.forEach((dragBox, index) => {
+            if (modelGroups[index].name != 'car') {
+                modelGroups[index].position.x = dragBox.position.x;
+                modelGroups[index].position.z = dragBox.position.z;
+                modelGroups[index].rotation.y = dragBox.rotation.y; 
+                boxHelpers[index].update();
+            }
+            if (selectedIndex != null) {
+                console.log(selectedIndex + " : " + modelGroups[selectedIndex].name);
+            }
+        });
         renderer.render(scene, camera);
     }
 }
