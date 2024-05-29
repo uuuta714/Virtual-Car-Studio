@@ -5,97 +5,127 @@ import {
     camera, 
     scene,
     objects,
+    selectedIndex,
+    modelGroups,
+    sceneMeshes,
+    boxHelpers,
+    modelDragBoxes
 } from './scripts.js'
 
-// import {
-//     openSlideOut,
-//     closeSlideOut
-// } from './userInteractions.js'
+// Event listener for applying intensity and color change
+document.getElementById("applyIntensityButton").addEventListener("click", function() {
+    const selectedLightIndex = parseInt(document.getElementById('lightInstanceDropdown').value);
+    applyIntensityChange(selectedLightIndex);
+});
+document.getElementById("applyColorButton").addEventListener("click", function() {
+    const selectedLightIndex = parseInt(document.getElementById('lightInstanceDropdown').value);
+    applyColorChange(selectedLightIndex);
+});
+// Event listener for deleting light instance
+document.getElementById("deleteLightButton").addEventListener("click", function() {
+    const selectedLightIndex = parseInt(document.getElementById('lightInstanceDropdown').value);
+    deleteLightInstance(selectedLightIndex);
+    updateStudioLightDropdown();
+});
+// Event listener for adding light instance
+document.getElementById("addLightButton").addEventListener("click", function() {
+    const selectedLightIndex = parseInt(document.getElementById('lightInstanceDropdown').value);
+    console.log(selectedLightIndex)
+    selectedIndex = selectedLightIndex;
+    console.log(selectedIndex)
+    createLightInstance();
+    updateStudioLightDropdown();
+});
 
-let selectedObject;
-// Raycaster
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
+// // import {
+// //     openSlideOut,
+// //     closeSlideOut
+// // } from './userInteractions.js'
+
+// let selectedObject;
+// // Raycaster
+// const raycaster = new THREE.Raycaster();
+// const mouse = new THREE.Vector2();
 
 
-// Function for mouse control
-export function onDocumentMouseDown(event) {
-    // Implementation of mouse down interactions
-    const slideOutElement = document.getElementById('lighting-content');
+// // Function for mouse control
+// export function onDocumentMouseDown(event) {
+//     // Implementation of mouse down interactions
+//     const slideOutElement = document.getElementById('lighting-content');
 
-    // Get the bounding rectangle of the slide-out element
-    const rect = slideOutElement.getBoundingClientRect();
+//     // Get the bounding rectangle of the slide-out element
+//     const rect = slideOutElement.getBoundingClientRect();
 
-    // Check if the mouse event is within the slide-out element
-    if (
-        event.clientX >= rect.left &&
-        event.clientX <= rect.right &&
-        event.clientY >= rect.top &&
-        event.clientY <= rect.bottom
-    ) {
-        // ignore the click if it was inside the slide-out element and apply the parameterised control
+//     // Check if the mouse event is within the slide-out element
+//     if (
+//         event.clientX >= rect.left &&
+//         event.clientX <= rect.right &&
+//         event.clientY >= rect.top &&
+//         event.clientY <= rect.bottom
+//     ) {
+//         // ignore the click if it was inside the slide-out element and apply the parameterised control
 
-        // Event listener for applying intensity and color change
-        document.getElementById("applyIntensityButton").addEventListener("click", applyIntensityChange(selectedObject));
-        document.getElementById("applyColorButton").addEventListener("click", applyColorChange(selectedObject));
-        // Event listener for deleting light instance
-        document.getElementById("deleteLightButton").addEventListener("click", deleteLightInstance);
-        return;
-    }
+//         // Event listener for applying intensity and color change
+//         document.getElementById("applyIntensityButton").addEventListener("click", applyIntensityChange(selectedIndex));
+//         document.getElementById("applyColorButton").addEventListener("click", applyColorChange(selectedIndex));
+//         // Event listener for deleting light instance
+//         document.getElementById("deleteLightButton").addEventListener("click", deleteLightInstance);
+//         return;
+//     }
 
-    var mouse = new THREE.Vector2();
-    mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
-	mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
+//     var mouse = new THREE.Vector2();
+//     mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
+// 	mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
 
-    const raycaster = new THREE.Raycaster();
-    raycaster.setFromCamera(mouse, camera);
-    const filteredObjects = scene.children.filter(object => object.name !== 'topLight');
-    var intersects = raycaster.intersectObjects(filteredObjects, true);
+//     const raycaster = new THREE.Raycaster();
+//     raycaster.setFromCamera(mouse, camera);
+//     const filteredObjects = scene.children.filter(object => object.name !== 'topLight');
+//     var intersects = raycaster.intersectObjects(filteredObjects, true);
 
-    if (intersects.length > 0) {
-		let hit = intersects[0].object;
+//     if (intersects.length > 0) {
+// 		let hit = intersects[0].object;
    
-        if (intersects.length) {
-            // locate the object from the 10 closest intersections
-            for (let i = 0; i < intersects.length; i++) {
-                let current = intersects[i].object;
-                if (current.isMesh) {
-                    // traverse to the parent to move the whole object
-                    while (current.parent.parent !== null) {
-                    current = current.parent;
-                    }
-                    hit = current;
-                }
-                break;
-            }
-        if (hit.name in objects) {
-            if (selectedObject != objects[hit.name]) {
-                selectedObject = objects[hit.name];
-                console.log(`Selected ${hit.name}`);
-				openSlideOut();
-            } else {
-                console.log(`${hit.name} is already selected`);
-            }
-        } else {
-            if (selectedObject) {
-                // Move selected object to the hit point if needed
-                var pos = intersects[0].point;
-                // collision control to be implemented
-                if (true) {
-                    selectedObject.model.position.x = pos.x;
-                    selectedObject.model.position.z = pos.z;
-                    selectedObject.box.setFromObject(selectedObject.model);
-                    console.log(`Moved ${selectedObject.model.name} to new position without collision.`);
-                } else {
-                    console.log(`Move blocked due to potential collision.`);
-                }
-            }
-        }
-    } else {
-        selectedObject = null; // Deselect any selected object
-    }
-  }
-}
+//         if (intersects.length) {
+//             // locate the object from the 10 closest intersections
+//             for (let i = 0; i < intersects.length; i++) {
+//                 let current = intersects[i].object;
+//                 if (current.isMesh) {
+//                     // traverse to the parent to move the whole object
+//                     while (current.parent.parent !== null) {
+//                     current = current.parent;
+//                     }
+//                     hit = current;
+//                 }
+//                 break;
+//             }
+//         if (hit.name in objects) {
+//             if (selectedObject != objects[hit.name]) {
+//                 selectedObject = objects[hit.name];
+//                 console.log(`Selected ${hit.name}`);
+// 				openSlideOut();
+//             } else {
+//                 console.log(`${hit.name} is already selected`);
+//             }
+//         } else {
+//             if (selectedObject) {
+//                 // Move selected object to the hit point if needed
+//                 var pos = intersects[0].point;
+//                 // collision control to be implemented
+//                 if (true) {
+//                     selectedObject.model.position.x = pos.x;
+//                     selectedObject.model.position.z = pos.z;
+//                     selectedObject.box.setFromObject(selectedObject.model);
+//                     console.log(`Moved ${selectedObject.model.name} to new position without collision.`);
+//                 } else {
+//                     console.log(`Move blocked due to potential collision.`);
+//                 }
+//             }
+//         }
+//     } else {
+//         selectedObject = null; // Deselect any selected object
+//     }
+//   }
+// }
 
 // // function to check collisions
 // function checkForCollisions(objectData, newPosition) {
@@ -113,68 +143,80 @@ export function onDocumentMouseDown(event) {
 // }
 
 
-let controls;
+// let controls;
 
-export function onDocumentKeyDown(event) {
-    // Implementation of key down interactions
-    if (selectedObject) {
-        switch (event.key) {
-            case "ArrowRight":
-                moveObject(selectedObject, 'right');
-                break;
-            case "ArrowLeft":
-                moveObject(selectedObject, 'left');
-                break;
-            case "ArrowUp":
-                moveObject(selectedObject, 'forward');
-                break;
-            case "ArrowDown":
-                moveObject(selectedObject, 'backward');
-                break;
-            case "Escape":
-                selectedObject = null;
-                console.log("deselected");
-                break;
-            case "l":
-                rotateObject(selectedObject, 4);
-                break;
-        }
-    }
-  }
+// export function onDocumentKeyDown(event) {
+//     // Implementation of key down interactions
+//     if (selectedObject) {
+//         switch (event.key) {
+//             case "ArrowRight":
+//                 moveObject(selectedObject, 'right');
+//                 break;
+//             case "ArrowLeft":
+//                 moveObject(selectedObject, 'left');
+//                 break;
+//             case "ArrowUp":
+//                 moveObject(selectedObject, 'forward');
+//                 break;
+//             case "ArrowDown":
+//                 moveObject(selectedObject, 'backward');
+//                 break;
+//             case "Escape":
+//                 selectedObject = null;
+//                 console.log("deselected");
+//                 break;
+//             case "l":
+//                 rotateObject(selectedObject, 4);
+//                 break;
+//         }
+//     }
+//   }
 
-function moveObject(object, direction) {
-    const distance = 0.25; // Distance to move in each step, adjust as needed
-    switch (direction) {
-        case 'left':
-            object.model.position.x += distance;
-            break;
-        case 'right':
-            object.model.position.x -= distance;
-            break;
-        case 'backward':
-            object.model.position.z -= distance;
-            break;
-        case 'forward':
-            object.model.position.z += distance;
-            break;
-    }
-    object.box.setFromObject(object.model);  // Update the bounding box
-  }
+// function moveObject(object, direction) {
+//     const distance = 0.25; // Distance to move in each step, adjust as needed
+//     switch (direction) {
+//         case 'left':
+//             object.model.position.x += distance;
+//             break;
+//         case 'right':
+//             object.model.position.x -= distance;
+//             break;
+//         case 'backward':
+//             object.model.position.z -= distance;
+//             break;
+//         case 'forward':
+//             object.model.position.z += distance;
+//             break;
+//     }
+//     object.box.setFromObject(object.model);  // Update the bounding box
+//   }
 
-function rotateObject(object, angleInDegrees) {
-  const angleInRadians = angleInDegrees * Math.PI / 180;
-  object.model.rotation.y += angleInRadians;  // Rotate around the y-axis
-  object.box.setFromObject(object.model);  // Update the bounding box
-}
+// function rotateObject(object, angleInDegrees) {
+//   const angleInRadians = angleInDegrees * Math.PI / 180;
+//   object.model.rotation.y += angleInRadians;  // Rotate around the y-axis
+//   object.box.setFromObject(object.model);  // Update the bounding box
+// }
 
+let cloneCounter = 1;
 // Define a function to create new instance of the light
-let studioLightCount = 0;
 function createLightInstance() {
     // Clone the model to create a new instance
-	const model = objects["studioLight"].model;
-    const newModel = model.clone();
-    studioLightCount++;
-	newModel.name = "studiolight" + studioLightCount;
+    let model;
+    if (modelGroups[selectedIndex].name.startsWith('studio_light')) {
+        model = modelGroups[selectedIndex];
+    } else {
+        model = modelGroups.find(group => group.name.startsWith('studio_light'));
+    }
+	
+    model.rotation.set(0,0,0);
+    const newModel = model.clone(true);
+    newModel.traverse((node) => {
+        if (node.isMesh) {
+            node.material = node.material.clone();
+        }
+    });
+
+	newModel.name = "studio_light " + cloneCounter++;
     // Adjust position, scale, or any other properties if needed
     // For example:
     newModel.position.set(1, 0, -5);
@@ -182,25 +224,46 @@ function createLightInstance() {
     // Add the new instance to the scene
     scene.add(newModel);
     
-    // Optionally, update the objects dictionary with the new instance
-    objects[newModel.name] = {
-        model: newModel,
-        box: new THREE.Box3().setFromObject(newModel),
-        helper: new THREE.Box3Helper(new THREE.Box3(), 0xffff00)
-    };
+    // Compute the bounding box to get size
+    const boundingBox = new THREE.Box3().setFromObject(newModel);
+    const size = new THREE.Vector3();
+    boundingBox.getSize(size);
+
+    // Create BoxGeometry based on the computed size
+    const modelDragBox = new THREE.Mesh(
+        new THREE.BoxGeometry(size.x, size.y, size.z),
+        new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 })
+    );
+    modelDragBox.position.copy(newModel.position);
+    modelDragBox.userData.originalY = modelDragBox.position.y += size.y / 2
+    scene.add(modelDragBox);
+    
+    const boxHelper = new THREE.BoxHelper(modelDragBox, 0xffff00);
+    boxHelper.visible = false;
+    
+    scene.add(boxHelper);
+    
+    modelGroups.push(newModel)
+    sceneMeshes.push(modelDragBox);
+    modelDragBoxes.push(modelDragBox);
+    boxHelpers.push(boxHelper);
 }
 
 // Function to delete the selected light instance
-function deleteLightInstance() {
-    if (selectedObject) {
-        scene.remove(selectedObject.model);
-        selectedObject = null;
+function deleteLightInstance(index) {
+    if (modelGroups[index].name.startsWith('studio_light')) {
+        scene.remove(modelGroups[index]);
+        modelGroups.splice(index, 1);
+        sceneMeshes.splice(index, 1);
+        boxHelpers.splice(index, 1);
+        modelDragBoxes.splice(index, 1);
+        selectedIndex = null;
     }
 }
 
 // Event listener for moving objects
-document.addEventListener('mousedown', onDocumentMouseDown);
-document.addEventListener('keydown', onDocumentKeyDown);
+// document.addEventListener('mousedown', onDocumentMouseDown);
+// document.addEventListener('keydown', onDocumentKeyDown);
 
 // // Event listener for opening lighting control slideout
 // document.getElementById("openButton").addEventListener("click", openSlideOut);
@@ -215,16 +278,15 @@ document.addEventListener('keydown', onDocumentKeyDown);
 //     document.getElementById("rightSlideout").style.right = "-250px";
 // }
 
-// Event listener for adding light instance
-document.getElementById("addLightButton").addEventListener("click", createLightInstance);
 
 
-// Function to apply intensity change
-function applyIntensityChange(selectedObject) {
-    if (selectedObject) {
+
+// Function to apply intensity change - Updated
+function applyIntensityChange(index) {
+    if (modelGroups[index].name.startsWith('studio_light')) {
         const intensityInput = document.getElementById("intensityInput");
         const intensity = parseFloat(intensityInput.value);
-        selectedObject.model.children[0].traverse((child) => {
+        modelGroups[index].traverse((child) => {
             if (child.isMesh) {
                 if (child.name == "Object_7") {
                     const pointLight = child.children[0];
@@ -237,12 +299,12 @@ function applyIntensityChange(selectedObject) {
     }
 }
 
-// Function to apply color change
-function applyColorChange(selectedObject) {
-    if (selectedObject) {
+// Function to apply color change - Updated
+function applyColorChange(index) {
+    if (modelGroups[index].name.startsWith('studio_light')) {
         const colorPicker = document.getElementById("colorPicker");
         const color = new THREE.Color(colorPicker.value);
-        selectedObject.model.children[0].traverse((child) => {
+        modelGroups[index].traverse((child) => {
             if (child.isMesh) {
                 if (child.name == "Object_7") {
                     const pointLight = child.children[0];
@@ -253,4 +315,19 @@ function applyColorChange(selectedObject) {
             }
         })
     }
+}
+
+// Function to populate the studio light dropdown menu
+export function updateStudioLightDropdown() {
+    const dropdown = document.getElementById('lightInstanceDropdown');
+    dropdown.innerHTML = '<option value="">Select a Light Instance</option>'; // Clear previous options
+
+    modelGroups.forEach((modelGroup, index) => {
+        if (modelGroup.name.startsWith('studio_light')) {
+            const optionElement = document.createElement('option');
+            optionElement.value = index;
+            optionElement.textContent = modelGroup.name;
+            dropdown.appendChild(optionElement);
+        }
+    });
 }
