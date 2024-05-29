@@ -573,46 +573,79 @@ document.getElementById("customLight").addEventListener("click", function() {
   });
 
 // floor
+function addAsphaltFloor() {
+    // Load the floor texture
+    const textureLoader = new THREE.TextureLoader();
+    // Load the textures
+    const colorTexture = textureLoader.load("./assets/asphalt/Asphalt025C_2K-JPG_Color.jpg");
+    const displacementTexture = textureLoader.load("./assets/asphalt/Asphalt025C_2K-JPG_Displacement.jpg");
+    const normalTexture = textureLoader.load("./assets/asphalt/Asphalt025C_2K-JPG_NormalGL.jpg");
+    const roughnessTexture = textureLoader.load("./assets/asphalt/Asphalt025C_2K-JPG_Roughness.jpg");
+    const aoTexture = textureLoader.load("./assets/asphalt/Asphalt025C_2K-JPG_AmbientOcclusion.jpg");
 
-// Load the floor texture
-const textureLoader = new THREE.TextureLoader();
-// Load the textures
-const colorTexture = textureLoader.load(
-"./assets/asphalt/Asphalt025C_2K-JPG_Color.jpg"
-);
-const displacementTexture = textureLoader.load(
-"./assets/asphalt/Asphalt025C_2K-JPG_Displacement.jpg"
-);
-const normalTexture = textureLoader.load(
-"./assets/asphalt/Asphalt025C_2K-JPG_NormalGL.jpg"
-);
-const roughnessTexture = textureLoader.load(
-    "./assets/asphalt/Asphalt025C_2K-JPG_Roughness.jpg"
-  );
-const aoTexture = textureLoader.load(
-"./assets/asphalt/Asphalt025C_2K-JPG_AmbientOcclusion.jpg"
-);
+    // Set texture parameters
+    colorTexture.wrapS = colorTexture.wrapT = THREE.RepeatWrapping;
+    displacementTexture.wrapS = displacementTexture.wrapT = THREE.RepeatWrapping;
+    normalTexture.wrapS = normalTexture.wrapT = THREE.RepeatWrapping;
+    aoTexture.wrapS = aoTexture.wrapT = THREE.RepeatWrapping;
 
+    // Create the floor plane
+    const floorGeometry = new THREE.PlaneGeometry(20, 20);
+    const floorMaterial = new THREE.MeshStandardMaterial({ 
+      map: colorTexture,
+      displacementMap: displacementTexture,
+      normalMap: normalTexture,
+      roughnessMap: roughnessTexture,
+      aoMap: aoTexture,
+      displacementScale: 0,
+      side: THREE.DoubleSide,
+    });
 
-// Set texture parameters
-colorTexture.wrapS = colorTexture.wrapT = THREE.RepeatWrapping;
-displacementTexture.wrapS = displacementTexture.wrapT = THREE.RepeatWrapping;
-normalTexture.wrapS = normalTexture.wrapT = THREE.RepeatWrapping;
-aoTexture.wrapS = aoTexture.wrapT = THREE.RepeatWrapping;
+    const floorMesh = new THREE.Mesh(floorGeometry, floorMaterial);
+    floorMesh.rotation.x = -Math.PI / 2; // Rotate to lay flat
+    floorMesh.position.y = 0;
+    scene.add(floorMesh);
+  }
 
-// Create the floor plane
-const floorGeometry = new THREE.PlaneGeometry(20, 20);
-const floorMaterial = new THREE.MeshStandardMaterial({ 
-    map: colorTexture,
-    displacementMap: displacementTexture,
-    normalMap: normalTexture,
-    roughnessMap: roughnessTexture,
-    aoMap: aoTexture,
-    displacementScale: 0,
-    side: THREE.DoubleSide,
-});
+  function addConcreteFloor() {
+    // Load the floor texture
+    const textureLoader = new THREE.TextureLoader();
+    // Load the textures
+    const colorTexture = textureLoader.load("./assets/concrete/Concrete017_1K-PNG_Color.png");
+    const displacementTexture = textureLoader.load("./assets/concrete/Concrete017_1K-PNG_Displacement.png");
+    const normalTexture = textureLoader.load("./assets/concrete/Concrete017_1K-PNG_NormalGL.png");
+    const roughnessTexture = textureLoader.load("./assets/concrete/Concrete017_1K-PNG_Roughness.png");
+    // const aoTexture = textureLoader.load("./assets/asphalt/Asphalt025C_2K-JPG_AmbientOcclusion.jpg");
 
-const floorMesh = new THREE.Mesh(floorGeometry, floorMaterial);
-floorMesh.rotation.x = -Math.PI / 2; // Rotate to lay flat
-floorMesh.position.y = 0;
-// scene.add(floorMesh);
+    // Set texture parameters
+    colorTexture.wrapS = colorTexture.wrapT = THREE.RepeatWrapping;
+    displacementTexture.wrapS = displacementTexture.wrapT = THREE.RepeatWrapping;
+    normalTexture.wrapS = normalTexture.wrapT = THREE.RepeatWrapping;
+    // aoTexture.wrapS = aoTexture.wrapT = THREE.RepeatWrapping;
+
+    // Create the floor plane
+    const floorGeometry = new THREE.PlaneGeometry(20, 20);
+    const floorMaterial = new THREE.MeshStandardMaterial({ 
+      map: colorTexture,
+      displacementMap: displacementTexture,
+      normalMap: normalTexture,
+      roughnessMap: roughnessTexture,
+    //   aoMap: aoTexture,
+      displacementScale: 0,
+      side: THREE.DoubleSide,
+    });
+
+    const floorMesh = new THREE.Mesh(floorGeometry, floorMaterial);
+    floorMesh.rotation.x = -Math.PI / 2; // Rotate to lay flat
+    floorMesh.position.y = 0;
+    scene.add(floorMesh);
+  }
+
+  document.getElementById("floorDropdown").addEventListener("change", function() {
+    var selectedOption = this.value;
+    if (selectedOption === "asphalt") {
+      addAsphaltFloor();
+    } else if (selectedOption === "concrete") {
+        addConcreteFloor();
+    }
+  });
