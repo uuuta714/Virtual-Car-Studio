@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Virtual Car Studio</title>
+    <link rel="stylesheet" href="scss/styles.scss">
     <link rel="stylesheet" href="scss/styles.scss">
 </head>
 <body>
@@ -26,7 +28,10 @@
                 <!-- Tabs -->
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="lighting-tab" data-bs-toggle="tab" data-bs-target="#lighting-tab-pane" type="button" role="tab" aria-controls="lighting-tab-pane" aria-selected="true">Lighting</button>
+                    <button class="nav-link active" id="env-tab" data-bs-toggle="tab" data-bs-target="#env-tab-pane" type="button" role="tab" aria-controls="env-tab-pane" aria-selected="true">Environment</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="lighting-tab" data-bs-toggle="tab" data-bs-target="#lighting-tab-pane" type="button" role="tab" aria-controls="lighting-tab-pane" aria-selected="true">Lighting</button>
                     </li>
                     <li class="nav-item" role="presentation">
                     <button class="nav-link" id="camera-tab" data-bs-toggle="tab" data-bs-target="#camera-tab-pane" type="button" role="tab" aria-controls="camera-tab-pane" aria-selected="false">Camera</button>
@@ -36,8 +41,29 @@
                     </li>
                 </ul>
                 <div class="tab-content" id="myTabContent">
+                    <!-- Environment -->
+                    <div class="tab-pane fade show active" id="env-tab-pane" role="tabpanel" aria-labelledby="env-tab" tabindex="0">
+                        <div id="env-content">
+                            <p class="fs-4 my-4">Choose Environment</p>
+                            <button id="snow" class="btn btn-secondary btn-lg">Snow</button>
+                            <button id="beach" class="btn btn-secondary btn-lg">Beach</button>
+                            <button id="studioButton" class="btn btn-secondary btn-lg">Studio</button>
+                            <div class="tab-pane fade" id="studio" role="tabpanel" aria-labelledby="studio-tab">
+                                <div class="d-grid gap-2">
+                                    <p class="fs-4 my-4">Set Up Studio Environment</p>
+                                    <button id="defaultLight" class="btn btn-secondary">Default studio lighting</button>
+                                    <button id="customLight" class="btn btn-secondary">Customise studio lighting</button>
+                                    <p class="fs-4 my-4">Select Floor Material</p>
+                                    <select class="form-select" id="floorDropdown">
+                                        <option value="asphalt">Asphalt</option>
+                                        <option value="concrete">Concrete</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Lighting -->
-                    <div class="tab-pane fade show active" id="lighting-tab-pane" role="tabpanel" aria-labelledby="lighting-tab" tabindex="0">
+                    <div class="tab-pane fade" id="lighting-tab-pane" role="tabpanel" aria-labelledby="lighting-tab" tabindex="0">
                         <div id="lighting-content">
                             <p class="fs-4 my-4">Set Up Lighting Environment</p>
                             <ul class="list-unstyled my-4">
@@ -47,17 +73,9 @@
                                 <li class="fw-normal"><em>- Arrow Keys: Move selected object</em></li>
                                 <li class="fw-normal"><em>- 'L' Key: Rotate selected object anti-clockwise</em></li>
                             </ul>
-                            <p class="fs-5 my-3">Select Light Instance</p>
-                            <div class="row">
-                                <div class="col">
-                                    <select class="form-select" id="lightInstanceDropdown">
-                                        <option value="">Select a Light Instance</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <p class="fs-5 my-3">Clone / Remove Light Instance</p>
+                            <p class="fs-5 my-3">Add / Remove Light Instance</p>
                             <div class="d-grid gap-2">
-                                <button id="addLightButton" class="btn btn-secondary">Clone</button>
+                                <button id="addLightButton" class="btn btn-secondary">Add</button>
                                 <button id = "deleteLightButton" class="btn btn-danger">Remove</button>
                             </div> 
                             <br>
@@ -196,6 +214,7 @@
     <script src="./js/scripts.js" type="module"></script>
     <script src="./js/lighting.js" type="module"></script>
     <script src="./js/userInteractions.js" type="module"></script>
+    <script src="./js/env.js" type="module"></script>
     <script src="/node_modules/webm-writer/WebMWriter.js"></script>
 </body>
 </html>

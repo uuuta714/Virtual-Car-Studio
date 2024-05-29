@@ -3,6 +3,7 @@ import { Vector3 } from 'three'
 import { gsap } from 'gsap';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls.js'
+import { GroundedSkybox } from 'three/examples/jsm/objects/GroundedSkybox.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import { CCapture } from 'ccapture.js-npmfixed';
@@ -12,6 +13,10 @@ import { DragControls } from 'three/examples/jsm/controls/DragControls.js';
 export const renderer = new THREE.WebGLRenderer({antialias: true});
 //renderer.preserveDrawingBuffer = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
+// renderer.toneMapping = THREE.NeutralToneMapping;
+// renderer.toneMappingExposure = 1;
+// renderer.shadowMap.enabled = true;
+// renderer.shadowMap.type = THREE.PCFShadowMap;
 document.body.appendChild(renderer.domElement);
 export const scene = new THREE.Scene();
 const tl = gsap.timeline();
@@ -25,7 +30,7 @@ export const camera = new THREE.PerspectiveCamera(
     45,
     window.innerWidth / window.innerHeight,
     0.01,
-    50
+    1000
 );
 
 // Orbit Controls
@@ -116,7 +121,6 @@ export const modelDragBoxes = [];
 
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 4;
 
 //load car model
 //let car;
@@ -784,7 +788,13 @@ export function getCameraDetails(cam) {
 
 // // GUI Control
 // var gui = new GUI();
+// // GUI Control
+// var gui = new GUI();
 
+// // Function to toggle GUI visibility
+// function toggleGUIVisibility() {
+//     gui.domElement.style.display = (gui.domElement.style.display === 'none' ? '' : 'none');
+// }
 // // Function to toggle GUI visibility
 // function toggleGUIVisibility() {
 //     gui.domElement.style.display = (gui.domElement.style.display === 'none' ? '' : 'none');
@@ -794,6 +804,27 @@ export function getCameraDetails(cam) {
 // var params = {
 //     showCustomCameraHelper: false,
 // };
+// // Parameters of GUI
+// var params = {
+//     showCustomCameraHelper: false,
+// };
+
+// // Add a toggle in the GUI
+// gui.add(params, 'showCustomCameraHelper').name('Show Custom Camera').onChange(value => {
+//     customCameraHelper.visible = value;
+//     transformControls.visible = value;
+// });
+
+// Function to toggle visibility of the customCameraHelper and transformControl
+export function displayCustomCamera(isChecked) {
+    if (isChecked) {
+        customCameraHelper.visible = true;
+        transformControls.visible = true;
+    } else {
+        customCameraHelper.visible = false;
+        transformControls.visible = false;
+    }
+}
 
 // // Add a toggle in the GUI
 // gui.add(params, 'showCustomCameraHelper').name('Show Custom Camera').onChange(value => {

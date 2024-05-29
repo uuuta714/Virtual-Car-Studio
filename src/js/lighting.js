@@ -268,8 +268,14 @@ function deleteLightInstance(index) {
 // // Event listener for opening lighting control slideout
 // document.getElementById("openButton").addEventListener("click", openSlideOut);
 // document.getElementById("closeButton").addEventListener("click", closeSlideOut);
+// // Event listener for opening lighting control slideout
+// document.getElementById("openButton").addEventListener("click", openSlideOut);
+// document.getElementById("closeButton").addEventListener("click", closeSlideOut);
 
 // Control the lighting control slideout
+// export function openSlideOut() {
+//     document.getElementById("rightSlideout").style.right = "0";
+// }
 // export function openSlideOut() {
 //     document.getElementById("rightSlideout").style.right = "0";
 // }
