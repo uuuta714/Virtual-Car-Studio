@@ -140,6 +140,9 @@ function(texture) {
           if (child.isMesh) {
             child.castShadow = true;
           }
+          if (child.material) {
+            child.material.envMapIntensity = 0.4;
+          }
         });
         
         modelGroup.position.y += 0.65;
@@ -388,10 +391,10 @@ function checkCollision(currentIndex) {
             const otherBox = modelDragBoxes[i].geometry.boundingBox.clone();
             otherBox.applyMatrix4(modelDragBoxes[i].matrixWorld);
 
-            if (currentBox.intersectsBox(otherBox)) {
-                console.log(`Collision detected between model ${currentIndex} and model ${i}`);
-                return true;
-            }
+            // if (currentBox.intersectsBox(otherBox)) {
+            //     console.log(`Collision detected between model ${currentIndex} and model ${i}`);
+            //     return true;
+            // }
         }
     }
     return false;
