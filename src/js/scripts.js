@@ -484,17 +484,6 @@ const params = {
 
 let skybox;
 
-// // load snow env
-// new RGBELoader().load('./assets/snow/birchwood_1k.hdr', (hdrMap) => {
-//     hdrMap.mapping = THREE.EquirectangularReflectionMapping;
-//     envMap = hdrMap;
-//     skybox = new GroundedSkybox( envMap, params.height, params.radius );
-//     skybox.position.y = params.height - 0.01;
-//     scene.add( skybox );
-//     scene.environment = envMap;
-//     scene.background = null;
-// });
-
 // load snow/beach env 
 function loadEnvironmentMap(path) {
     new RGBELoader().load(path, (hdrMap) => {
@@ -513,20 +502,6 @@ function loadEnvironmentMap(path) {
         scene.background = null;
     });
 }
-
-// load studio env
-
-// const SCENE_COLOR = 0x000000;
-// this.renderer.setClearColor(SCENE_COLOR, 1);
-// new RGBELoader().load('./assets/studio/studio_small_08_1k.hdr', (hdrMap) => {
-//     hdrMap.mapping = THREE.EquirectangularReflectionMapping;
-//     envMap = hdrMap;
-//     // skybox = new GroundedSkybox( envMap, params.height, params.radius );
-//     // skybox.position.y = params.height - 0.01;
-//     // scene.add( skybox );
-//     scene.environment = envMap;
-//     // scene.background = null;
-// });
 
 function loadStudiotMap() {
     scene.environment = null;
