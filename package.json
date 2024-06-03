@@ -2,9 +2,10 @@
   "name": "threeboilerplate",
   "version": "1.0.0",
   "description": "The Three.js boilerplate that I'm using in my Tutorials.",
-  "main": "index.js",
+  "source": "src/index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "parcel build ./src/index.html --public-url ./ --no-scope-hoist",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
