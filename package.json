@@ -4,7 +4,10 @@
   "description": "The Three.js boilerplate that I'm using in my Tutorials.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel ./*.html",
+    "predeploy": "rm -rf dist && parcel build ./*.html --public-url https://github.com/uuuta714/Virtual-Car-Studio",
+    "deploy": "gh-pages -d dist"
   },
   "keywords": [],
   "author": "Wael Yasmina",
