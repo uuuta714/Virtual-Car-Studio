@@ -13,6 +13,7 @@
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.3",
     "ccapture.js-npmfixed": "^1.1.0",
+    "gh-pages": "^6.1.1",
     "gsap": "^3.12.5",
     "three": "^0.161.0",
     "webm-writer": "^1.0.0"
