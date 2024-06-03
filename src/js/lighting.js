@@ -6,6 +6,7 @@ import {
     scene,
     objects,
     selectedIndex,
+    setSelectedIndex,
     modelGroups,
     sceneMeshes,
     boxHelpers,
@@ -31,7 +32,7 @@ document.getElementById("deleteLightButton").addEventListener("click", function(
 document.getElementById("addLightButton").addEventListener("click", function() {
     const selectedLightIndex = parseInt(document.getElementById('lightInstanceDropdown').value);
     console.log(selectedLightIndex)
-    selectedIndex = selectedLightIndex;
+    setSelectedIndex(selectedLightIndex);
     console.log(selectedIndex)
     createLightInstance();
     updateStudioLightDropdown();
@@ -257,7 +258,7 @@ function deleteLightInstance(index) {
         sceneMeshes.splice(index, 1);
         boxHelpers.splice(index, 1);
         modelDragBoxes.splice(index, 1);
-        selectedIndex = null;
+        setSelectedIndex(0);
     }
 }
 

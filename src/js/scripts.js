@@ -114,6 +114,9 @@ const rgbeLoader = new RGBELoader();
 
 // Load models using GLTFLoader - with dragcontrols
 export var selectedIndex;
+export function setSelectedIndex(index) {
+    selectedIndex = index;
+};
 export const sceneMeshes = [];
 export const boxHelpers = [];
 export const modelGroups = [];
