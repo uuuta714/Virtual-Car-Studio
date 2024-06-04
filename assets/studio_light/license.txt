@@ -1,0 +1,11 @@
+Model Information:
+* title:	Studio light
+* source:	https://sketchfab.com/3d-models/studio-light-cd1c7ea258b24ee7be91e4145fd88115
+* author:	LAGZ26 (https://sketchfab.com/LAGZ26)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Studio light" (https://sketchfab.com/3d-models/studio-light-cd1c7ea258b24ee7be91e4145fd88115) by LAGZ26 (https://sketchfab.com/LAGZ26) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
