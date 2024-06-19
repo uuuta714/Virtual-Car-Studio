@@ -394,10 +394,10 @@ function checkCollision(currentIndex) {
             const otherBox = modelDragBoxes[i].geometry.boundingBox.clone();
             otherBox.applyMatrix4(modelDragBoxes[i].matrixWorld);
 
-            // if (currentBox.intersectsBox(otherBox)) {
-            //     console.log(`Collision detected between model ${currentIndex} and model ${i}`);
-            //     return true;
-            // }
+            if (currentBox.intersectsBox(otherBox)) {
+                //console.log(`Collision detected between model ${currentIndex} and model ${i}`);
+                return true;
+            }
         }
     }
     return false;
