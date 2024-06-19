@@ -302,10 +302,8 @@ gltfLoader.load(
             }
         });
         
-        modelGroup.position.set(-0.1,3.6,-1);
-        //modelGroup.position.set(-0.3,3.6,-0.5);
+        modelGroup.position.set(-0.35,3.6,-1);
         modelGroup.scale.set(3,1.5,5);
-        //modelGroup.rotation.y += 90 * Math.PI / 180;
         scene.add(modelGroup);
         
         // Compute the bounding box to get size
@@ -315,12 +313,12 @@ gltfLoader.load(
     
         // Create BoxGeometry based on the computed size
         const modelDragBox = new THREE.Mesh(
-            new THREE.BoxGeometry(size.x, size.y, size.z),
+            new THREE.BoxGeometry(size.x, size.y, size.z + 0.8),
             new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 })
         );
         modelDragBox.position.copy(modelGroup.position);
         modelDragBox.userData.originalY = modelDragBox.position.y += size.y / 2
-        // modelDragBox.rotation.y += 90 * Math.PI / 180;
+        modelDragBox.rotation.y += 90 * Math.PI / 180;
         scene.add(modelDragBox);
         
         const boxHelper = new THREE.BoxHelper(modelDragBox, 0xffff00);
