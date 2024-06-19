@@ -125,6 +125,9 @@ export const modelDragBoxes = [];
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
+// select progress container element
+const progressContainer = document.getElementById('progress-container');
+const progressElement = document.getElementById('progress');
 //load car model
 //let car;
 rgbeLoader.load('./assets/MR_INT-001_NaturalStudio_NAD.hdr',
@@ -150,7 +153,7 @@ function(texture) {
         
         modelGroup.position.y += 0.65;
         scene.add(modelGroup);
-        
+        progressContainer.style.display = 'none';
         // Compute the bounding box to get size
         const boundingBox = new THREE.Box3().setFromObject(modelGroup);
         const size = new THREE.Vector3();
@@ -175,9 +178,15 @@ function(texture) {
         modelDragBoxes.push(modelDragBox);
         boxHelpers.push(boxHelper);
         },
+        (xhr) => {
+            // Update the loading progress
+            console.log(`loading ${xhr.loaded / xhr.total * 100}%`);
+            const percentComplete = Math.round((xhr.loaded / xhr.total) * 100);
+            progressElement.innerText = `Loading 3D model... ${percentComplete}%`;
+          },
         function (error) {
             console.log(error);
-        }
+        },
     );
 });
 
