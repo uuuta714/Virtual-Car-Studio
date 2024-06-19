@@ -38,6 +38,13 @@ function loadEnvironmentMap(path) {
         scene.environment = envMap;
         scene.background = null;
     });
+
+    if (floor) {
+      scene.remove(floor);
+      floor.geometry.dispose();
+      floor.material.dispose();
+      floor = null;
+    }
 }
 
 function loadStudiotMap() {
@@ -85,6 +92,8 @@ document.getElementById("customLight").addEventListener("click", function() {
   });
 
 // floor
+let floor;
+
 function addAsphaltFloor() {
     // Load the floor texture
     const textureLoader = new THREE.TextureLoader();
@@ -102,8 +111,8 @@ function addAsphaltFloor() {
     aoTexture.wrapS = aoTexture.wrapT = THREE.RepeatWrapping;
 
     // Create the floor plane
-    const floorGeometry = new THREE.PlaneGeometry(20, 20);
-    const floorMaterial = new THREE.MeshStandardMaterial({ 
+    let floorGeometry = new THREE.PlaneGeometry(20, 20);
+    let floorMaterial = new THREE.MeshStandardMaterial({ 
       map: colorTexture,
       displacementMap: displacementTexture,
       normalMap: normalTexture,
@@ -113,10 +122,10 @@ function addAsphaltFloor() {
       side: THREE.DoubleSide,
     });
 
-    const floorMesh = new THREE.Mesh(floorGeometry, floorMaterial);
-    floorMesh.rotation.x = -Math.PI / 2; // Rotate to lay flat
-    floorMesh.position.y = 0;
-    scene.add(floorMesh);
+    floor = new THREE.Mesh(floorGeometry, floorMaterial);
+    floor.rotation.x = -Math.PI / 2; // Rotate to lay flat
+    floor.position.y = 0;
+    scene.add(floor);
   }
 
   function addConcreteFloor() {
@@ -136,8 +145,8 @@ function addAsphaltFloor() {
     // aoTexture.wrapS = aoTexture.wrapT = THREE.RepeatWrapping;
 
     // Create the floor plane
-    const floorGeometry = new THREE.PlaneGeometry(20, 20);
-    const floorMaterial = new THREE.MeshStandardMaterial({ 
+    let floorGeometry = new THREE.PlaneGeometry(20, 20);
+    let floorMaterial = new THREE.MeshStandardMaterial({ 
       map: colorTexture,
       displacementMap: displacementTexture,
       normalMap: normalTexture,
@@ -147,10 +156,10 @@ function addAsphaltFloor() {
       side: THREE.DoubleSide,
     });
 
-    const floorMesh = new THREE.Mesh(floorGeometry, floorMaterial);
-    floorMesh.rotation.x = -Math.PI / 2; // Rotate to lay flat
-    floorMesh.position.y = 0;
-    scene.add(floorMesh);
+    floor = new THREE.Mesh(floorGeometry, floorMaterial);
+    floor.rotation.x = -Math.PI / 2; // Rotate to lay flat
+    floor.position.y = 0;
+    scene.add(floor);
   }
 
   document.getElementById("floorDropdown").addEventListener("change", function() {
