@@ -8,9 +8,13 @@ import {
     selectedIndex,
     setSelectedIndex,
     modelGroups,
-    sceneMeshes,
     boxHelpers,
-    modelDragBoxes
+    modelDragBoxes,
+    draggableObjects,
+    indexMap,
+    setIndexMap,
+    getKeyByValue,
+    updateIndexMap
 } from './scripts.js'
 
 // Event listener for applying intensity and color change
@@ -245,9 +249,11 @@ function createLightInstance() {
     scene.add(boxHelper);
     
     modelGroups.push(newModel)
-    sceneMeshes.push(modelDragBox);
+    draggableObjects.push(modelDragBox);
     modelDragBoxes.push(modelDragBox);
+    setIndexMap(modelDragBox);
     boxHelpers.push(boxHelper);
+    console.log(indexMap);
 }
 
 // Function to delete the selected light instance
@@ -255,10 +261,13 @@ function deleteLightInstance(index) {
     if (modelGroups[index].name.startsWith('studio_light')) {
         scene.remove(modelGroups[index]);
         modelGroups.splice(index, 1);
-        sceneMeshes.splice(index, 1);
         boxHelpers.splice(index, 1);
         modelDragBoxes.splice(index, 1);
+        let key = getKeyByValue(indexMap, index);
+        draggableObjects.splice(key, 1);
+        updateIndexMap(key, index);
         setSelectedIndex(0);
+        console.log(indexMap);
     }
 }
 
