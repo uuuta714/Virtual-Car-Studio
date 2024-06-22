@@ -117,10 +117,37 @@ export var selectedIndex;
 export function setSelectedIndex(index) {
     selectedIndex = index;
 };
-export const sceneMeshes = [];
 export const boxHelpers = [];
 export const modelGroups = [];
 export const modelDragBoxes = [];
+export const draggableObjects = [];
+export var indexMap = new Map();
+export function setIndexMap(modelDragBox) {
+    indexMap.set(draggableObjects.indexOf(modelDragBox), modelDragBoxes.indexOf(modelDragBox))
+};
+export function getKeyByValue(map, searchValue) {
+    for (let [key, value] of map.entries()) {
+        if (value === searchValue) {
+            return key;
+        }
+    }
+    return undefined;
+}
+export function updateIndexMap(removedKey, removedValue) {
+    let newMap = new Map();
+
+    for (let [key, value] of indexMap.entries()) {
+        if (key > removedKey) {
+            newMap.set(key - 1, value - (value > removedValue ? 1 : 0));
+        } else if (value > removedValue) {
+            newMap.set(key, value - 1);
+        } else {
+            newMap.set(key, value);
+        }
+    }
+    indexMap.clear()
+    indexMap = newMap
+}
 
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -165,7 +192,6 @@ function(texture) {
             new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 })
         );
         modelDragBox.position.copy(modelGroup.position);
-        modelDragBox.userData.originalY = modelDragBox.position.y += size.y / 2
         scene.add(modelDragBox);
         
         const boxHelper = new THREE.BoxHelper(modelDragBox, 0xffff00);
@@ -174,7 +200,6 @@ function(texture) {
         scene.add(boxHelper);
         
         modelGroups.push(modelGroup)
-        sceneMeshes.push(modelDragBox);
         modelDragBoxes.push(modelDragBox);
         boxHelpers.push(boxHelper);
         },
@@ -241,8 +266,9 @@ gltfLoader.load(
     scene.add(boxHelper);
     
     modelGroups.push(modelGroup)
-    sceneMeshes.push(modelDragBox);
+    draggableObjects.push(modelDragBox);
     modelDragBoxes.push(modelDragBox);
+    setIndexMap(modelDragBox);
     boxHelpers.push(boxHelper);
     },
     function (error) {
@@ -336,8 +362,9 @@ gltfLoader.load(
         scene.add(boxHelper);
         
         modelGroups.push(modelGroup)
-        sceneMeshes.push(modelDragBox);
+        draggableObjects.push(modelDragBox);
         modelDragBoxes.push(modelDragBox);
+        setIndexMap(modelDragBox);
         boxHelpers.push(boxHelper);
         },
         function (error) {
@@ -412,51 +439,44 @@ function checkCollision(currentIndex) {
 
 
 // Define Dragcontrol actions
-const dragControls = new DragControls(sceneMeshes, camera, renderer.domElement);
+const dragControls = new DragControls(draggableObjects, camera, renderer.domElement);
 
 dragControls.addEventListener('hoveron', function (event) {
-    const index = sceneMeshes.indexOf(event.object);
-    if (index !== -1 && modelGroups[index].name != 'car') {
+        const index = indexMap.get(draggableObjects.indexOf(event.object));
         boxHelpers[index].visible = true;
         orbitControls.enabled = false;
-    }
 });
 
 dragControls.addEventListener('hoveroff', function (event) {
-    const index = sceneMeshes.indexOf(event.object);
-    if (index !== -1 && modelGroups[index].name != 'car') {
+        const index = indexMap.get(draggableObjects.indexOf(event.object));
         boxHelpers[index].visible = false;
         orbitControls.enabled = true;
-    }
 });
 
 dragControls.addEventListener('dragstart', function (event) {
-    const index = selectedIndex = sceneMeshes.indexOf(event.object);
-    if (index !== -1 && modelGroups[index].name != 'car') {
+        const index = selectedIndex = indexMap.get(draggableObjects.indexOf(event.object));
         boxHelpers[index].visible = true;
         orbitControls.enabled = false;
-        event.object.userData.lastGoodPosition = event.object.position.clone();
-        event.object.userData.lastGoodEuler = event.object.rotation.clone();
-    }
+        modelDragBoxes[index].userData.lastGoodPosition = event.object.position.clone();
+        modelDragBoxes[index].userData.lastGoodEuler = event.object.rotation.clone();
 });
 
 dragControls.addEventListener('drag', function (event) {
-    const index = sceneMeshes.indexOf(event.object);
-    if (index !== -1 && modelGroups[index].name != 'car') {
-        let originalY = event.object.userData.originalY;
-        event.object.position.y = originalY
+        const index = indexMap.get(draggableObjects.indexOf(event.object));
+        let originalY = modelDragBoxes[index].userData.originalY;
+        modelDragBoxes[index].position.y = originalY
         let step = 0.05; // Incremental step for interpolation, adjust as needed
-        let currentPosition = event.object.position.clone();
-        let lastNonCollidingPosition = event.object.userData.lastGoodPosition.clone();
+        let currentPosition = modelDragBoxes[index].position.clone();
+        let lastNonCollidingPosition = modelDragBoxes[index].userData.lastGoodPosition.clone();
         while (step <= 1.0) {
             // Interpolate between the last known good position and the current dragged position
             let interpolatedPosition = lastNonCollidingPosition.clone().lerp(currentPosition, step);
-            event.object.position.copy(interpolatedPosition);
+            modelDragBoxes[index].position.copy(interpolatedPosition);
             updateBoundingBox(boxHelpers[index], modelDragBoxes[index]);
 
             if (checkCollision(index)) {
                 // If a collision is detected, break and use the last non-colliding position
-                event.object.position.copy(lastNonCollidingPosition);
+                modelDragBoxes[index].position.copy(lastNonCollidingPosition);
                 break;
             } else {
                 // Update last non-colliding position to the current interpolated position
@@ -465,17 +485,14 @@ dragControls.addEventListener('drag', function (event) {
             }
         }
         // Ensure the final position in this frame does not cause collision
-        event.object.position.copy(lastNonCollidingPosition);
-        event.object.userData.lastGoodPosition = lastNonCollidingPosition.clone();
-    }
+        modelDragBoxes[index].position.copy(lastNonCollidingPosition);
+        modelDragBoxes[index].userData.lastGoodPosition = lastNonCollidingPosition.clone();
 });
 
 dragControls.addEventListener('dragend', function (event) {
-    const index = sceneMeshes.indexOf(event.object);
-    if (index !== -1 && modelGroups[index].name != 'car') {
+        const index = indexMap.get(draggableObjects.indexOf(event.object));
         boxHelpers[index].visible = false;
         orbitControls.enabled = true;
-    }
 });
 
 
@@ -580,9 +597,6 @@ function animate() {
                 modelGroups[index].rotation.y = dragBox.rotation.y; 
                 boxHelpers[index].update();
             }
-            // if (selectedIndex != null) {
-            //     console.log(selectedIndex + " : " + modelGroups[selectedIndex].name);
-            // }
         });
         renderer.render(scene, camera);
     }
