@@ -544,7 +544,7 @@ export const cameraSequenceOptions = [
         endCameraPosition: new Vector3(0.00, 1.00, 3.41),
         endLookAtPosition: new Vector3(0.00, -8.50, -93.52),
         duration: 5.0,
-        ease: 'elastic.in'
+        ease: 'power2.in'
     },
     {
         id: 2,
@@ -554,7 +554,7 @@ export const cameraSequenceOptions = [
         endCameraPosition: new Vector3(0.00, 1.00, 3.00),
         endLookAtPosition: new Vector3(-0.95, -27.95, -92.66),
         duration: 3.5,
-        ease: 'elastic.inOut'
+        ease: 'none'
     },
     {
         id: 3,
@@ -564,7 +564,7 @@ export const cameraSequenceOptions = [
         endCameraPosition: new Vector3(-0.35, 0.87, -2.45),
         endLookAtPosition: new Vector3(12.00, -32.25, 91.15),
         duration: 3.5,
-        ease: 'elastic.out'
+        ease: 'none'
     },
     {
         id: 4,
@@ -574,7 +574,7 @@ export const cameraSequenceOptions = [
         endCameraPosition: new Vector3(-1.34, 0.86, 0.14),
         endLookAtPosition: new Vector3(40.26, -26.14, -84.17),
         duration: 3.5,
-        ease: 'expo.in'
+        ease: 'back.inOut'
     },
     {
         id: 5,
@@ -584,7 +584,7 @@ export const cameraSequenceOptions = [
         endCameraPosition: new Vector3(-0.02, 0.60, 2.10),
         endLookAtPosition: new Vector3(-0.01, -30.01, -93.07),
         duration: 3.5,
-        ease: 'expo.inOut'
+        ease: 'none'
     },
     {
         id: 6,
@@ -594,7 +594,7 @@ export const cameraSequenceOptions = [
         endCameraPosition: new Vector3(-0.90, 3.50, -2.50),
         endLookAtPosition: new Vector3(19.70, -76.58, 53.76),
         duration: 5,
-        ease: 'expo.out'
+        ease: 'circ.inOut'
     },
 ]
 
