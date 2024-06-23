@@ -11,7 +11,7 @@ import {
     cleanView,
     enableRecording,
     displayCustomCamera
-    } from './scripts.js';
+} from './scripts.js';
 
 import {
     updateStudioLightDropdown
@@ -21,7 +21,7 @@ import * as bootstrap from 'bootstrap';
 
 const offcanvasElement = document.getElementById('offcanvasNavbar');
 // Create a new Offcanvas instance
-const bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
+export const bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
 
 // Toggle visibility of the custom camera
 document.getElementById('custom-camera-visibility').addEventListener('change', function() {
@@ -43,6 +43,8 @@ document.getElementById('setStartPositionFromMainCamera').addEventListener('clic
     document.getElementById('cameraStartLookAtPositionX').value = cameraDetails.lookAtPosition.x.toFixed(2);
     document.getElementById('cameraStartLookAtPositionY').value = cameraDetails.lookAtPosition.y.toFixed(2);
     document.getElementById('cameraStartLookAtPositionZ').value = cameraDetails.lookAtPosition.z.toFixed(2);
+
+    bsOffcanvas.hide();
 });
 
 // Get camera end position and end lookAt position from main camera (browser view)
@@ -77,6 +79,8 @@ document.getElementById('setStartPositionFromCustomCamera').addEventListener('cl
     document.getElementById('cameraStartLookAtPositionX').value = cameraDetails.lookAtPosition.x.toFixed(2);
     document.getElementById('cameraStartLookAtPositionY').value = cameraDetails.lookAtPosition.y.toFixed(2);
     document.getElementById('cameraStartLookAtPositionZ').value = cameraDetails.lookAtPosition.z.toFixed(2);
+
+    bsOffcanvas.hide();
 });
 
 // Get camera end position and end lookAt position from custom camera
@@ -130,6 +134,8 @@ document.getElementById('createCameraMovement').addEventListener('click', functi
     // Call the function to add a new camera movement
     createCameraMovement(name, positions, duration, ease);
     updateCameraSequenceDropdown();
+
+    alert("Woo-hoo, your custom camera movement is successfully created!");
 });
 
 // Disable easingTypeDropdown when 'none' is selected for easingEffect
