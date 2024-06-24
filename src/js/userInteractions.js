@@ -10,9 +10,8 @@ import {
     createCameraMovement,
     cleanView,
     enableRecording,
-    displayCustomCamera,
-    objects,
-    selectedObject } from './scripts.js';
+    displayCustomCamera
+} from './scripts.js';
 
 import {
     updateStudioLightDropdown
@@ -22,26 +21,7 @@ import * as bootstrap from 'bootstrap';
 
 const offcanvasElement = document.getElementById('offcanvasNavbar');
 // Create a new Offcanvas instance
-const bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
-
-// To open the offcanvas
-// bsOffcanvas.show();
-
-// To close the offcanvas
-// bsOffcanvas.hide();
-
-
-// // Event listener to open the side modal
-// document.getElementById('open-slideout').addEventListener('click', function(event) {
-//     event.preventDefault();
-//     document.getElementById('slideout').classList.add('open');
-// });
-
-// // Event listener to close the side modal
-// document.getElementById('close-slideout').addEventListener('click', function(event) {
-//     event.preventDefault();
-//     document.getElementById('slideout').classList.remove('open');
-// });
+export const bsOffcanvas = new bootstrap.Offcanvas(offcanvasElement);
 
 // Toggle visibility of the custom camera
 document.getElementById('custom-camera-visibility').addEventListener('change', function() {
@@ -63,6 +43,8 @@ document.getElementById('setStartPositionFromMainCamera').addEventListener('clic
     document.getElementById('cameraStartLookAtPositionX').value = cameraDetails.lookAtPosition.x.toFixed(2);
     document.getElementById('cameraStartLookAtPositionY').value = cameraDetails.lookAtPosition.y.toFixed(2);
     document.getElementById('cameraStartLookAtPositionZ').value = cameraDetails.lookAtPosition.z.toFixed(2);
+
+    bsOffcanvas.hide();
 });
 
 // Get camera end position and end lookAt position from main camera (browser view)
@@ -97,6 +79,8 @@ document.getElementById('setStartPositionFromCustomCamera').addEventListener('cl
     document.getElementById('cameraStartLookAtPositionX').value = cameraDetails.lookAtPosition.x.toFixed(2);
     document.getElementById('cameraStartLookAtPositionY').value = cameraDetails.lookAtPosition.y.toFixed(2);
     document.getElementById('cameraStartLookAtPositionZ').value = cameraDetails.lookAtPosition.z.toFixed(2);
+
+    bsOffcanvas.hide();
 });
 
 // Get camera end position and end lookAt position from custom camera
@@ -120,6 +104,10 @@ document.getElementById('setEndPositionFromCustomCamera').addEventListener('clic
 document.getElementById('createCameraMovement').addEventListener('click', function() {
     const name = document.getElementById('cameraMovementName').value;
     const duration = parseFloat(document.getElementById('duration').value);
+    let ease = document.getElementById('easingEffectDropdown').value + '.' + document.getElementById('easingTypeDropdown').value;
+        if (document.getElementById('easingEffectDropdown').value == 'none') {
+            ease = 'none'
+        }
     const positions = {
         startPosition: {
             x: parseFloat(document.getElementById('cameraStartPositionX').value),
@@ -144,8 +132,21 @@ document.getElementById('createCameraMovement').addEventListener('click', functi
     };
 
     // Call the function to add a new camera movement
-    createCameraMovement(name, positions, duration);
+    createCameraMovement(name, positions, duration, ease);
     updateCameraSequenceDropdown();
+
+    alert("Woo-hoo, your custom camera movement is successfully created!");
+});
+
+// Disable easingTypeDropdown when 'none' is selected for easingEffect
+document.getElementById('easingEffectDropdown').addEventListener('change', function() {
+    var selectedEffect = this.value;
+    // Disable or enable the easingTypeDropdown based on the selected value
+    if (selectedEffect == 'none') {
+        document.getElementById('easingTypeDropdown').disabled = true;
+    } else {
+        document.getElementById('easingTypeDropdown').disabled = false;
+    }
 });
 
 // Start preview based on the selected camera sequence
@@ -177,11 +178,6 @@ function updateCameraSequenceDropdown() {
         dropdown.appendChild(optionElement);
     });
 }
-
-// // Populate the dropdown menu when the slideout opens
-// document.getElementById('open-slideout').addEventListener('click', function() {
-//     updateCameraSequenceDropdown();
-// });
 
 // Populate the dropdown menu when Offcanvas is about to show
 offcanvasElement.addEventListener('show.bs.offcanvas', function () {
@@ -229,21 +225,3 @@ document.getElementById('resetSequenceButton').addEventListener('click', () => {
     updateSequenceListDisplay(); // Update the list display after reset
     console.log('Selected Camera Sequences have been reset');
 });
-
-// // Event listener for opening lighting control slideout
-// document.getElementById("openButton").addEventListener("click", openSlideOut);
-// document.getElementById("closeButton").addEventListener("click", closeSlideOut);
-
-// // Control the lighting control slideout
-// export function openSlideOut() {
-//     document.getElementById("rightSlideout").style.right = "0";
-// }
-
-// export function closeSlideOut() {
-//     document.getElementById("rightSlideout").style.right = "-250px";
-// }
-
-
-// // Event listener for adding light isntance
-// document.getElementById("addLightButton").addEventListener("click", createLightInstance);
-
