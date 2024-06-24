@@ -584,14 +584,26 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"jd1tg":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "bsOffcanvas", ()=>bsOffcanvas);
 var _scriptsJs = require("./scripts.js");
 var _lightingJs = require("./lighting.js");
 var _bootstrap = require("bootstrap");
 const offcanvasElement = document.getElementById("offcanvasNavbar");
+// Create a new Offcanvas instance
 const bsOffcanvas = new _bootstrap.Offcanvas(offcanvasElement);
+// To open the offcanvas
+// bsOffcanvas.show();
+// To close the offcanvas
+// bsOffcanvas.hide();
+// // Event listener to open the side modal
+// document.getElementById('open-slideout').addEventListener('click', function(event) {
+//     event.preventDefault();
+//     document.getElementById('slideout').classList.add('open');
+// });
+// // Event listener to close the side modal
+// document.getElementById('close-slideout').addEventListener('click', function(event) {
+//     event.preventDefault();
+//     document.getElementById('slideout').classList.remove('open');
+// });
 // Toggle visibility of the custom camera
 document.getElementById("custom-camera-visibility").addEventListener("change", function() {
     (0, _scriptsJs.displayCustomCamera)(this.checked);
@@ -609,7 +621,6 @@ document.getElementById("setStartPositionFromMainCamera").addEventListener("clic
     document.getElementById("cameraStartLookAtPositionX").value = cameraDetails.lookAtPosition.x.toFixed(2);
     document.getElementById("cameraStartLookAtPositionY").value = cameraDetails.lookAtPosition.y.toFixed(2);
     document.getElementById("cameraStartLookAtPositionZ").value = cameraDetails.lookAtPosition.z.toFixed(2);
-    bsOffcanvas.hide();
 });
 // Get camera end position and end lookAt position from main camera (browser view)
 document.getElementById("setEndPositionFromMainCamera").addEventListener("click", function() {
@@ -638,7 +649,6 @@ document.getElementById("setStartPositionFromCustomCamera").addEventListener("cl
     document.getElementById("cameraStartLookAtPositionX").value = cameraDetails.lookAtPosition.x.toFixed(2);
     document.getElementById("cameraStartLookAtPositionY").value = cameraDetails.lookAtPosition.y.toFixed(2);
     document.getElementById("cameraStartLookAtPositionZ").value = cameraDetails.lookAtPosition.z.toFixed(2);
-    bsOffcanvas.hide();
 });
 // Get camera end position and end lookAt position from custom camera
 document.getElementById("setEndPositionFromCustomCamera").addEventListener("click", function() {
@@ -658,8 +668,6 @@ document.getElementById("setEndPositionFromCustomCamera").addEventListener("clic
 document.getElementById("createCameraMovement").addEventListener("click", function() {
     const name = document.getElementById("cameraMovementName").value;
     const duration = parseFloat(document.getElementById("duration").value);
-    let ease = document.getElementById("easingEffectDropdown").value + "." + document.getElementById("easingTypeDropdown").value;
-    if (document.getElementById("easingEffectDropdown").value == "none") ease = "none";
     const positions = {
         startPosition: {
             x: parseFloat(document.getElementById("cameraStartPositionX").value),
@@ -683,16 +691,8 @@ document.getElementById("createCameraMovement").addEventListener("click", functi
         }
     };
     // Call the function to add a new camera movement
-    (0, _scriptsJs.createCameraMovement)(name, positions, duration, ease);
+    (0, _scriptsJs.createCameraMovement)(name, positions, duration);
     updateCameraSequenceDropdown();
-    alert("Woo-hoo, your custom camera movement is successfully created!");
-});
-// Disable easingTypeDropdown when 'none' is selected for easingEffect
-document.getElementById("easingEffectDropdown").addEventListener("change", function() {
-    var selectedEffect = this.value;
-    // Disable or enable the easingTypeDropdown based on the selected value
-    if (selectedEffect == "none") document.getElementById("easingTypeDropdown").disabled = true;
-    else document.getElementById("easingTypeDropdown").disabled = false;
 });
 // Start preview based on the selected camera sequence
 document.getElementById("start-preview").addEventListener("click", function(event) {
@@ -720,6 +720,10 @@ function updateCameraSequenceDropdown() {
         dropdown.appendChild(optionElement);
     });
 }
+// // Populate the dropdown menu when the slideout opens
+// document.getElementById('open-slideout').addEventListener('click', function() {
+//     updateCameraSequenceDropdown();
+// });
 // Populate the dropdown menu when Offcanvas is about to show
 offcanvasElement.addEventListener("show.bs.offcanvas", function() {
     updateCameraSequenceDropdown();
@@ -757,9 +761,20 @@ document.getElementById("resetSequenceButton").addEventListener("click", ()=>{
     (0, _scriptsJs.resetCameraSequence)();
     updateSequenceListDisplay(); // Update the list display after reset
     console.log("Selected Camera Sequences have been reset");
-});
+}); // // Event listener for opening lighting control slideout
+ // document.getElementById("openButton").addEventListener("click", openSlideOut);
+ // document.getElementById("closeButton").addEventListener("click", closeSlideOut);
+ // // Control the lighting control slideout
+ // export function openSlideOut() {
+ //     document.getElementById("rightSlideout").style.right = "0";
+ // }
+ // export function closeSlideOut() {
+ //     document.getElementById("rightSlideout").style.right = "-250px";
+ // }
+ // // Event listener for adding light isntance
+ // document.getElementById("addLightButton").addEventListener("click", createLightInstance);
 
-},{"./scripts.js":"goJYj","./lighting.js":"98rP1","bootstrap":"h36JB","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"h36JB":[function(require,module,exports) {
+},{"./scripts.js":"goJYj","./lighting.js":"98rP1","bootstrap":"h36JB"}],"h36JB":[function(require,module,exports) {
 /*!
   * Bootstrap v5.3.3 (https://getbootstrap.com/)
   * Copyright 2011-2024 The Bootstrap Authors (https://github.com/twbs/bootstrap/graphs/contributors)
