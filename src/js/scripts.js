@@ -216,9 +216,6 @@ function(texture) {
 });
 
 
-// export let objects = {};
-// export var selectedObject = null;
-
 // load studio light
 gltfLoader.load(
 './assets/studio_light/scene.gltf',
@@ -275,44 +272,6 @@ gltfLoader.load(
         console.log(error);
     }
 );
-
-
-// Original code to load studio light ---------------------------
-// let light;
-// gltfLoader.load('./assets/studio_light/scene.gltf', function(gltf) {
-//     const model = gltf.scene;
-//     model.name = "studioLight";
-//     model.traverse(function (child) {
-//         if (child.isMesh) {
-//             if (child.name == 'Object_7') {
-//                 var material = child.material;
-//                 material.emissive.set(new THREE.Color(0xffffff));
-//                 material.needsUpdate = true;
-//                 const pointLight = new THREE.PointLight( new THREE.Color(0xffffff), 3 );
-//                 child.add( pointLight );
-//                 pointLight.name = pointLight;
-//                 }				
-//         }
-//         });
-
-//     model.position.set(0,0,-5);
-//     model.scale.set(0.3,0.15,0.2);
-//     scene.add(model);
-    
-//     const box = new THREE.Box3().setFromObject(model);
-//     const helper = new THREE.Box3Helper(box, 0xffff00);
-//     helper.visible = false;
-//     scene.add(helper);
-
-//     objects[model.name] = {
-//     model: model,
-//     box: box,
-//     helper: helper
-//     };
-// });
-
-// --------------------------------------------------------------
-
 
 // top light
 gltfLoader.load(
@@ -371,45 +330,6 @@ gltfLoader.load(
             console.log(error);
         }
     );
-
-
-// Original code to load top light ---------------------------
-// let topLight;
-//     gltfLoader.load('./assets/top_light/scene.gltf', function(gltf) {
-//         const model = gltf.scene;
-// 		model.name = "topLight";
-//         model.traverse(function (child) {
-//             if (child.isMesh) {
-//                 if (child.name == 'L1_L1_BODY_0') {
-//                     const directionalLight = new THREE.DirectionalLight( new THREE.Color(255,218,185), 0.001);
-// 					// spotLight.decay = 2;
-//                     // spotLight.angle = Math.PI/6;
-// 					// spotLight.penumbra = 1;
-//                     child.add( directionalLight );
-//                     directionalLight.name = directionalLight;
-//                   }
-//             child.castShadow = true;
-//             }
-//           });
-
-// 		model.position.set(-0.3,3.6,-0.5);
-//         model.scale.set(3,1.5,5);
-// 		model.rotation.set(0,90 * Math.PI / 180,0);
-// 		scene.add(model);
-
-// 		const box = new THREE.Box3().setFromObject(model);
-// 		const helper = new THREE.Box3Helper(box, 0xffff00);
-// 		helper.visible = false;
-// 		scene.add(helper);
-
-// 		objects[model.name] = {
-// 		model: model,
-// 		box: box,
-// 		helper: helper
-// 		};
-//     });
-// --------------------------------------------------------------
-
 
 // Function to update bounding box for collision detection
 function updateBoundingBox(boxHelper, modelDragBox) {
@@ -501,7 +421,7 @@ document.addEventListener('keydown', onDocumentKeyDown);
 
 function onDocumentKeyDown(event) {
     // Implementation of key down interactions
-    if (selectedIndex !== null && modelGroups[selectedIndex].name !== 'car') {
+    if (selectedIndex !== null ) {
         switch (event.key) {
             case "ArrowRight":
                 moveObject(selectedIndex, 'right');
@@ -623,7 +543,8 @@ export const cameraSequenceOptions = [
         startLookAtPosition: new Vector3(0.00, -8.50, -93.52),
         endCameraPosition: new Vector3(0.00, 1.00, 3.41),
         endLookAtPosition: new Vector3(0.00, -8.50, -93.52),
-        duration: 10.0
+        duration: 5.0,
+        ease: 'power2.in'
     },
     {
         id: 2,
@@ -632,7 +553,8 @@ export const cameraSequenceOptions = [
         startLookAtPosition: new Vector3(0.10, -11.00, -96.25),
         endCameraPosition: new Vector3(0.00, 1.00, 3.00),
         endLookAtPosition: new Vector3(-0.95, -27.95, -92.66),
-        duration: 7.0
+        duration: 3.5,
+        ease: 'none'
     },
     {
         id: 3,
@@ -641,7 +563,8 @@ export const cameraSequenceOptions = [
         startLookAtPosition: new Vector3(-12.00, -32.25, 91.15),
         endCameraPosition: new Vector3(-0.35, 0.87, -2.45),
         endLookAtPosition: new Vector3(12.00, -32.25, 91.15),
-        duration: 7.0
+        duration: 3.5,
+        ease: 'none'
     },
     {
         id: 4,
@@ -650,7 +573,8 @@ export const cameraSequenceOptions = [
         startLookAtPosition: new Vector3(40.26, -26.14, -84.17),
         endCameraPosition: new Vector3(-1.34, 0.86, 0.14),
         endLookAtPosition: new Vector3(40.26, -26.14, -84.17),
-        duration: 7.0
+        duration: 3.5,
+        ease: 'back.inOut'
     },
     {
         id: 5,
@@ -659,7 +583,8 @@ export const cameraSequenceOptions = [
         startLookAtPosition: new Vector3(-0.01, -30.01, -93.07),
         endCameraPosition: new Vector3(-0.02, 0.60, 2.10),
         endLookAtPosition: new Vector3(-0.01, -30.01, -93.07),
-        duration: 7.0
+        duration: 3.5,
+        ease: 'none'
     },
     {
         id: 6,
@@ -671,53 +596,13 @@ export const cameraSequenceOptions = [
         duration: 5,
         ease: 'circ.inOut'
     },
-    {
-        id: 7,
-        name: 'Side Pan none',
-        startCameraPosition: new Vector3(3.00, 0.53, -0.12),
-        startLookAtPosition: new Vector3(-78.86, 1.69, 57.30),
-        endCameraPosition: new Vector3(3.00, 0.53, -0.12),
-        endLookAtPosition: new Vector3(-86.10, 1.69, -45.51),
-        duration: 5,
-        ease: 'none'
-    },
-    {
-        id: 8,
-        name: 'Side Pan power.in',
-        startCameraPosition: new Vector3(3.00, 0.53, -0.12),
-        startLookAtPosition: new Vector3(-78.86, 1.69, 57.30),
-        endCameraPosition: new Vector3(3.00, 0.53, -0.12),
-        endLookAtPosition: new Vector3(-86.10, 1.69, -45.51),
-        duration: 5,
-        ease: 'power2.in'
-    },
-    {
-        id: 9,
-        name: 'Side Pan power.inOut',
-        startCameraPosition: new Vector3(3.00, 0.53, -0.12),
-        startLookAtPosition: new Vector3(-78.86, 1.69, 57.30),
-        endCameraPosition: new Vector3(3.00, 0.53, -0.12),
-        endLookAtPosition: new Vector3(-86.10, 1.69, -45.51),
-        duration: 5,
-        ease: 'power2.inOut'
-    },
-    {
-        id: 10,
-        name: 'Side Pan power.out',
-        startCameraPosition: new Vector3(3.00, 0.53, -0.12),
-        startLookAtPosition: new Vector3(-78.86, 1.69, 57.30),
-        endCameraPosition: new Vector3(3.00, 0.53, -0.12),
-        endLookAtPosition: new Vector3(-86.10, 1.69, -45.51),
-        duration: 5,
-        ease: 'power2.out'
-    },
 ]
 
 // Array to store selected camera sequence
 export let selectedCameraSequence = [];
 
 // Function to add a new camera movement to cameraSequenceOptions
-export function createCameraMovement(name, positions, duration) {
+export function createCameraMovement(name, positions, duration, ease) {
     const { startPosition, startLookAt, endPosition, endLookAt } = positions;
     const newCameraMovement = {
         id: cameraSequenceOptions.length + 1,
@@ -726,7 +611,8 @@ export function createCameraMovement(name, positions, duration) {
         startLookAtPosition: new Vector3(startLookAt.x, startLookAt.y, startLookAt.z),
         endCameraPosition: new Vector3(endPosition.x, endPosition.y, endPosition.z),
         endLookAtPosition: new Vector3(endLookAt.x, endLookAt.y, endLookAt.z),
-        duration
+        duration,
+        ease
     };
 
     cameraSequenceOptions.push(newCameraMovement);
@@ -790,7 +676,7 @@ export function startCameraSequence() {
             y: sequence.endCameraPosition.y,
             z: sequence.endCameraPosition.z,
             duration: sequence.duration,
-            ease: "none"
+            ease: sequence.ease
         });
 
         // Animate camera's direction by interpolating between startLookAtPosition and endLookAtPosition
@@ -855,35 +741,6 @@ export function getCameraDetails(cam) {
     };
 }
 
-// // GUI Control
-// var gui = new GUI();
-// // GUI Control
-// var gui = new GUI();
-
-// // Function to toggle GUI visibility
-// function toggleGUIVisibility() {
-//     gui.domElement.style.display = (gui.domElement.style.display === 'none' ? '' : 'none');
-// }
-// // Function to toggle GUI visibility
-// function toggleGUIVisibility() {
-//     gui.domElement.style.display = (gui.domElement.style.display === 'none' ? '' : 'none');
-// }
-
-// // Parameters of GUI
-// var params = {
-//     showCustomCameraHelper: false,
-// };
-// // Parameters of GUI
-// var params = {
-//     showCustomCameraHelper: false,
-// };
-
-// // Add a toggle in the GUI
-// gui.add(params, 'showCustomCameraHelper').name('Show Custom Camera').onChange(value => {
-//     customCameraHelper.visible = value;
-//     transformControls.visible = value;
-// });
-
 // Function to toggle visibility of the customCameraHelper and transformControl
 export function displayCustomCamera(isChecked) {
     if (isChecked) {
@@ -894,24 +751,6 @@ export function displayCustomCamera(isChecked) {
         transformControls.visible = false;
     }
 }
-
-// // Add a toggle in the GUI
-// gui.add(params, 'showCustomCameraHelper').name('Show Custom Camera').onChange(value => {
-//     customCameraHelper.visible = value;
-//     transformControls.visible = value;
-// });
-
-// Function to toggle visibility of the customCameraHelper and transformControl
-// export function displayCustomCamera(isChecked) {
-//     if (isChecked) {
-//         customCameraHelper.visible = true;
-//         transformControls.visible = true;
-//     } else {
-//         customCameraHelper.visible = false;
-//         transformControls.visible = false;
-//     }
-// }
-
 
 // Function to clean window for video recording
 export function cleanView() {

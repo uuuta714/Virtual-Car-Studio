@@ -137,6 +137,35 @@
                                 </div>
                             </div>
                             <br>
+                            <p class="fs-5 my-3">Select Easing Effect and Type</p>
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <label for="easingEffectName">Easing Effect:</label>
+                                </div>
+                                <div class="col">
+                                    <select class="form-select" id="easingEffectDropdown">
+                                        <option value="none">none</option>
+                                        <option value="power2">power</option>
+                                        <option value="back">back</option>
+                                        <option value="circ">circ</option>
+                                        <option value="elastic">elastic</option>
+                                        <option value="expo">expo</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <label for="easingTypeName">Easing Type:</label>
+                                </div>
+                                <div class="col">
+                                    <select class="form-select" id="easingTypeDropdown" disabled>
+                                        <option value="in">in</option>
+                                        <option value="inOut">inOut</option>
+                                        <option value="out">out</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <br>
                             <p class="fs-5 my-3">Set Start Position</p>
                             <div class="d-grid gap-2">
                                 <button id="setStartPositionFromMainCamera" class="btn btn-secondary">Capture Browser View Position</button>
