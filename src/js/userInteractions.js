@@ -185,6 +185,28 @@ offcanvasElement.addEventListener('show.bs.offcanvas', function () {
     updateStudioLightDropdown();
 });
 
+// // Function to update the display of selected sequences
+// function updateSequenceListDisplay() {
+//     const list = document.getElementById('selectedSequenceList');
+//     list.innerHTML = ''; // Clear existing list items
+
+//     if (selectedCameraSequence.length === 0) {
+//         // Add default message if no sequences are available
+//         const noItemsListItem = document.createElement('p');
+//         noItemsListItem.classList.add('fw-normal');
+//         noItemsListItem.classList.add('m-0');
+//         noItemsListItem.textContent = "No camera movement is added in the sequence";
+//         list.appendChild(noItemsListItem);
+//     } else {
+//         selectedCameraSequence.forEach(sequence => {
+//             const listItem = document.createElement('li');
+//             listItem.classList.add('list-group-item');
+//             listItem.textContent = `${sequence.name}`;
+//             list.appendChild(listItem);
+//         });
+//     }
+// }
+
 // Function to update the display of selected sequences
 function updateSequenceListDisplay() {
     const list = document.getElementById('selectedSequenceList');
@@ -193,19 +215,32 @@ function updateSequenceListDisplay() {
     if (selectedCameraSequence.length === 0) {
         // Add default message if no sequences are available
         const noItemsListItem = document.createElement('p');
-        noItemsListItem.classList.add('fw-normal');
-        noItemsListItem.classList.add('m-0');
+        noItemsListItem.classList.add('fw-normal', 'm-0');
         noItemsListItem.textContent = "No camera movement is added in the sequence";
         list.appendChild(noItemsListItem);
     } else {
-        selectedCameraSequence.forEach(sequence => {
+        selectedCameraSequence.forEach((sequence, index) => {
             const listItem = document.createElement('li');
-            listItem.classList.add('list-group-item');
-            listItem.textContent = `${sequence.name}`;
+            listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+            listItem.textContent = sequence.name;
+
+            const deleteButton = document.createElement('button');
+            deleteButton.classList.add('btn', 'btn-danger', 'btn-sm');
+            deleteButton.textContent = 'Delete';
+            deleteButton.addEventListener('click', () => deleteSequence(index));
+
+            listItem.appendChild(deleteButton);
             list.appendChild(listItem);
         });
     }
 }
+
+// Function to delete a sequence by index
+function deleteSequence(index) {
+    selectedCameraSequence.splice(index, 1); // Remove the sequence from the array
+    updateSequenceListDisplay(); // Update the display
+}
+
 
 // Event listener for the "Add to Sequence" button
 document.getElementById('addToSequenceButton').addEventListener('click', () => {
