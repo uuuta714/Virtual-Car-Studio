@@ -596,6 +596,46 @@ export const cameraSequenceOptions = [
         duration: 5,
         ease: 'circ.inOut'
     },
+    {
+        id: 7,
+        name: 'Side Pan none',
+        startCameraPosition: new Vector3(3.00, 0.53, -0.12),
+        startLookAtPosition: new Vector3(-78.86, 1.69, 57.30),
+        endCameraPosition: new Vector3(3.00, 0.53, -0.12),
+        endLookAtPosition: new Vector3(-86.10, 1.69, -45.51),
+        duration: 5,
+        ease: 'none'
+    },
+    {
+        id: 8,
+        name: 'Side Pan power.in',
+        startCameraPosition: new Vector3(3.00, 0.53, -0.12),
+        startLookAtPosition: new Vector3(-78.86, 1.69, 57.30),
+        endCameraPosition: new Vector3(3.00, 0.53, -0.12),
+        endLookAtPosition: new Vector3(-86.10, 1.69, -45.51),
+        duration: 5,
+        ease: 'power2.in'
+    },
+    {
+        id: 9,
+        name: 'Side Pan power.inOut',
+        startCameraPosition: new Vector3(3.00, 0.53, -0.12),
+        startLookAtPosition: new Vector3(-78.86, 1.69, 57.30),
+        endCameraPosition: new Vector3(3.00, 0.53, -0.12),
+        endLookAtPosition: new Vector3(-86.10, 1.69, -45.51),
+        duration: 5,
+        ease: 'power2.inOut'
+    },
+    {
+        id: 10,
+        name: 'Side Pan power.out',
+        startCameraPosition: new Vector3(3.00, 0.53, -0.12),
+        startLookAtPosition: new Vector3(-78.86, 1.69, 57.30),
+        endCameraPosition: new Vector3(3.00, 0.53, -0.12),
+        endLookAtPosition: new Vector3(-86.10, 1.69, -45.51),
+        duration: 5,
+        ease: 'power2.out'
+    },
 ]
 
 // Array to store selected camera sequence
@@ -682,9 +722,10 @@ export function startCameraSequence() {
         // Animate camera's direction by interpolating between startLookAtPosition and endLookAtPosition
         tl.to({}, {
             duration: sequence.duration,
-            ease: sequence.ease,
+            //ease: sequence.ease,
             onUpdate: function() {
-                const progress = this.progress();
+                const rawProgress = this.progress();
+                const progress = gsap.parseEase(sequence.ease)(rawProgress);
                 const directionX = gsap.utils.interpolate(sequence.startLookAtPosition.x, sequence.endLookAtPosition.x, progress);
                 const directionY = gsap.utils.interpolate(sequence.startLookAtPosition.y, sequence.endLookAtPosition.y, progress);
                 const directionZ = gsap.utils.interpolate(sequence.startLookAtPosition.z, sequence.endLookAtPosition.z, progress);
@@ -755,11 +796,16 @@ export function displayCustomCamera(isChecked) {
 export function cleanView() {
     customCameraHelper.visible = false;
     transformControls.visible = false;
+    dragControls.enabled = false;
+    boxHelpers.forEach(boxHelper => {
+        boxHelper.visible = false;
+    })
 }
 
 // Function to reset window after video recording
 function resetView() {
     customCameraHelper.visible = true;
     transformControls.visible = true;
+    dragControls.enabled = true;
     animate();
 }
