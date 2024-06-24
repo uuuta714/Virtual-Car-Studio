@@ -157,6 +157,9 @@ const progressContainer = document.getElementById('progress-container');
 const progressElement = document.getElementById('progress');
 //load car model
 //let car;
+
+let carBoundingBox;
+
 rgbeLoader.load('./assets/MR_INT-001_NaturalStudio_NAD.hdr',
 function(texture) {
     // texture.mapping = THREE.EquirectangularReflectionMapping;
@@ -182,9 +185,9 @@ function(texture) {
         scene.add(modelGroup);
         progressContainer.style.display = 'none';
         // Compute the bounding box to get size
-        const boundingBox = new THREE.Box3().setFromObject(modelGroup);
+        carBoundingBox = new THREE.Box3().setFromObject(modelGroup);
         const size = new THREE.Vector3();
-        boundingBox.getSize(size);
+        carBoundingBox.getSize(size);
 
         // Create BoxGeometry based on the computed size
         const modelDragBox = new THREE.Mesh(
@@ -215,7 +218,7 @@ function(texture) {
     );
 });
 
-
+export let lightBoundingBoxSize;
 // load studio light
 gltfLoader.load(
 './assets/studio_light/scene.gltf',
@@ -246,6 +249,7 @@ gltfLoader.load(
     // Compute the bounding box to get size
     const boundingBox = new THREE.Box3().setFromObject(modelGroup);
     const size = new THREE.Vector3();
+    lightBoundingBoxSize = size;
     boundingBox.getSize(size);
 
     // Create BoxGeometry based on the computed size
@@ -338,24 +342,49 @@ function updateBoundingBox(boxHelper, modelDragBox) {
     boxHelper.update();
 }
 
-// Function to check collision between objects
+// // Function to check collision between objects
+// function checkCollision(currentIndex) {
+//     const currentBox = modelDragBoxes[currentIndex].geometry.boundingBox.clone();
+//     currentBox.applyMatrix4(modelDragBoxes[currentIndex].matrixWorld);
+
+//     for (let i = 0; i < modelDragBoxes.length; i++) {
+//         if (i !== currentIndex) {
+//             const otherBox = modelDragBoxes[i].geometry.boundingBox.clone();
+//             otherBox.applyMatrix4(modelDragBoxes[i].matrixWorld);
+
+//             // Compute the sizes of both bounding boxes
+//             const currentBoxSize = new THREE.Vector3();
+//             const otherBoxSize = new THREE.Vector3();
+//             currentBox.getSize(currentBoxSize);
+//             otherBox.getSize(otherBoxSize);
+
+//             // Check for intersection if sizes are different
+//             if (currentBox.intersectsBox(otherBox)) {
+//                 //console.log(`Collision detected between model ${currentIndex} and model ${i}`);
+//                 return true;
+//             }
+//         }
+//     }
+//     return false;
+// }
+// Function to check collision between an object and a specific bounding box
 function checkCollision(currentIndex) {
     const currentBox = modelDragBoxes[currentIndex].geometry.boundingBox.clone();
     currentBox.applyMatrix4(modelDragBoxes[currentIndex].matrixWorld);
 
-    for (let i = 0; i < modelDragBoxes.length; i++) {
-        if (i !== currentIndex) {
-            const otherBox = modelDragBoxes[i].geometry.boundingBox.clone();
-            otherBox.applyMatrix4(modelDragBoxes[i].matrixWorld);
+    // Compute the size of the current bounding box
+    const currentBoxSize = new THREE.Vector3();
+    currentBox.getSize(currentBoxSize);
 
-            if (currentBox.intersectsBox(otherBox)) {
-                //console.log(`Collision detected between model ${currentIndex} and model ${i}`);
-                return true;
-            }
-        }
+    // Check for intersection with the specific carBoundingBox
+    if (currentBox.intersectsBox(carBoundingBox)) {
+        //console.log(`Collision detected between model ${currentIndex} and car`);
+        return true;
     }
+
     return false;
 }
+
 
 
 // Define Dragcontrol actions
@@ -363,6 +392,7 @@ const dragControls = new DragControls(draggableObjects, camera, renderer.domElem
 
 dragControls.addEventListener('hoveron', function (event) {
         const index = indexMap.get(draggableObjects.indexOf(event.object));
+        console.log(event.object);
         boxHelpers[index].visible = true;
         orbitControls.enabled = false;
 });

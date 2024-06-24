@@ -14,7 +14,8 @@ import {
     indexMap,
     setIndexMap,
     getKeyByValue,
-    updateIndexMap
+    updateIndexMap,
+    lightBoundingBoxSize,
 } from './scripts.js'
 
 // Event listener for applying intensity and color change
@@ -204,6 +205,12 @@ document.getElementById("addLightButton").addEventListener("click", function() {
 
 let cloneCounter = 1;
 // Define a function to create new instance of the light
+
+// Function to generate a random number between min and max
+function getRandomOffset(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
 function createLightInstance() {
     // Clone the model to create a new instance
     let model;
@@ -224,8 +231,17 @@ function createLightInstance() {
 	newModel.name = "studio_light " + cloneCounter++;
     // Adjust position, scale, or any other properties if needed
     // For example:
-    newModel.position.set(1, 0, -5);
-    
+    // Set the position of the newModel relative to the model's position
+    // Ensure offsets are greater than size.x and size.z
+    let offsetX = getRandomOffset(lightBoundingBoxSize.x + 0.1, lightBoundingBoxSize.x + 2);
+    let offsetZ = getRandomOffset(lightBoundingBoxSize.z + 0.1, lightBoundingBoxSize.z + 2);
+ 
+    // Set the position of the newModel relative to the model's position
+    newModel.position.set(
+        model.position.x, // x position offset by a random number greater than size.x
+        model.position.y,           // y position stays the same
+        model.position.z,  // z position offset by a random number greater than size.z
+    );
     // Add the new instance to the scene
     scene.add(newModel);
     
