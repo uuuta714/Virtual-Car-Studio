@@ -257,6 +257,7 @@ gltfLoader.load(
         new THREE.BoxGeometry(size.x, size.y, size.z),
         new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 })
     );
+    modelDragBox.name = modelGroup.name;
     modelDragBox.position.copy(modelGroup.position);
     modelDragBox.userData.originalY = modelDragBox.position.y += size.y / 2
     scene.add(modelDragBox);
@@ -390,17 +391,69 @@ function checkCollision(currentIndex) {
 // Define Dragcontrol actions
 const dragControls = new DragControls(draggableObjects, camera, renderer.domElement);
 
-dragControls.addEventListener('hoveron', function (event) {
-        const index = indexMap.get(draggableObjects.indexOf(event.object));
-        console.log(event.object);
-        boxHelpers[index].visible = true;
-        orbitControls.enabled = false;
+// dragControls.addEventListener('hoveron', function (event) {
+//         const index = indexMap.get(draggableObjects.indexOf(event.object));
+//         console.log(event.object.name);
+//         boxHelpers[index].visible = true;
+//         orbitControls.enabled = false;
+// });
+
+// dragControls.addEventListener('hoveroff', function (event) {
+//         const index = indexMap.get(draggableObjects.indexOf(event.object));
+//         boxHelpers[index].visible = false;
+//         orbitControls.enabled = true;
+// });
+
+// Create a map to store the text sprites for each object
+const textSprites = new Map();
+
+// Function to create a text sprite
+function createTextSprite(text) {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    const fontSize = 48;
+    context.font = `${fontSize}px Arial`;
+    context.fillStyle = 'rgba(255, 255, 255, 1.0)';
+    context.fillText(text, 0, fontSize);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    const material = new THREE.SpriteMaterial({ map: texture });
+    const sprite = new THREE.Sprite(material);
+
+    return sprite;
+}
+
+dragControls.addEventListener('hoveron', function(event) {
+    const index = indexMap.get(draggableObjects.indexOf(event.object));
+    boxHelpers[index].visible = true;
+    orbitControls.enabled = false;
+
+    // Create or retrieve the text sprite
+    let textSprite = textSprites.get(event.object);
+    if (!textSprite) {
+        textSprite = createTextSprite(event.object.name);
+        scene.add(textSprite);
+        textSprites.set(event.object, textSprite);
+    }
+
+    // Position the text sprite near the bounding box
+    const boundingBox = new THREE.Box3().setFromObject(event.object);
+    const center = new THREE.Vector3();
+    boundingBox.getCenter(center);
+    textSprite.position.set(center.x, boundingBox.max.y + 0.5, center.z); // Adjust the y-offset as needed
+    textSprite.visible = true;
 });
 
-dragControls.addEventListener('hoveroff', function (event) {
-        const index = indexMap.get(draggableObjects.indexOf(event.object));
-        boxHelpers[index].visible = false;
-        orbitControls.enabled = true;
+dragControls.addEventListener('hoveroff', function(event) {
+    const index = indexMap.get(draggableObjects.indexOf(event.object));
+    boxHelpers[index].visible = false;
+    orbitControls.enabled = true;
+
+    // Hide the text sprite
+    const textSprite = textSprites.get(event.object);
+    if (textSprite) {
+        textSprite.visible = false;
+    }
 });
 
 dragControls.addEventListener('dragstart', function (event) {

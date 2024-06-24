@@ -255,6 +255,7 @@ function createLightInstance() {
         new THREE.BoxGeometry(size.x, size.y, size.z),
         new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 })
     );
+    modelDragBox.name = newModel.name;
     modelDragBox.position.copy(newModel.position);
     modelDragBox.userData.originalY = modelDragBox.position.y += size.y / 2
     scene.add(modelDragBox);
