@@ -131,11 +131,14 @@ document.getElementById('createCameraMovement').addEventListener('click', functi
         }
     };
 
-    // Call the function to add a new camera movement
-    createCameraMovement(name, positions, duration, ease);
-    updateCameraSequenceDropdown();
-
-    alert("Woo-hoo, your custom camera movement is successfully created!");
+    if (cameraSequenceOptions.some(option => option.name == name)) {
+        alert(name + ' already exists. Please enter different name.')
+    } else {
+        // Call the function to add a new camera movement
+        createCameraMovement(name, positions, duration, ease);
+        updateCameraSequenceDropdown();
+        alert("Woo-hoo, your custom camera movement is successfully created!");
+    }
 });
 
 // Disable easingTypeDropdown when 'none' is selected for easingEffect
