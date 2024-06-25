@@ -195,16 +195,16 @@ function(texture) {
             new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 })
         );
         modelDragBox.position.copy(modelGroup.position);
-        scene.add(modelDragBox);
+        // scene.add(modelDragBox);
         
         const boxHelper = new THREE.BoxHelper(modelDragBox, 0xffff00);
         boxHelper.visible = false;
         
-        scene.add(boxHelper);
+        // scene.add(boxHelper);
         
-        modelGroups.push(modelGroup)
-        modelDragBoxes.push(modelDragBox);
-        boxHelpers.push(boxHelper);
+        // modelGroups.push(modelGroup)
+        // modelDragBoxes.push(modelDragBox);
+        // boxHelpers.push(boxHelper);
         },
         (xhr) => {
             // Update the loading progress
