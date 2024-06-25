@@ -210,7 +210,7 @@ function(texture) {
             // Update the loading progress
             console.log(`loading ${xhr.loaded / xhr.total * 100}%`);
             const percentComplete = Math.round((xhr.loaded / xhr.total) * 100);
-            progressElement.innerText = `Loading 3D model... ${percentComplete}%`;
+            progressElement.innerText = `Loading 3D model...`;
           },
         function (error) {
             console.log(error);
