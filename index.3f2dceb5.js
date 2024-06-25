@@ -758,6 +758,10 @@ document.getElementById("addLightButton").addEventListener("click", function() {
 // }
 let cloneCounter = 1;
 // Define a function to create new instance of the light
+// Function to generate a random number between min and max
+function getRandomOffset(min, max) {
+    return Math.random() * (max - min) + min;
+}
 function createLightInstance() {
     // Clone the model to create a new instance
     let model;
@@ -771,7 +775,12 @@ function createLightInstance() {
     newModel.name = "studio_light " + cloneCounter++;
     // Adjust position, scale, or any other properties if needed
     // For example:
-    newModel.position.set(1, 0, -5);
+    // Set the position of the newModel relative to the model's position
+    // Ensure offsets are greater than size.x and size.z
+    let offsetX = getRandomOffset((0, _scriptsJs.lightBoundingBoxSize).x + 0.1, (0, _scriptsJs.lightBoundingBoxSize).x + 2);
+    let offsetZ = getRandomOffset((0, _scriptsJs.lightBoundingBoxSize).z + 0.1, (0, _scriptsJs.lightBoundingBoxSize).z + 2);
+    // Set the position of the newModel relative to the model's position
+    newModel.position.set(model.position.x, model.position.y, model.position.z);
     // Add the new instance to the scene
     (0, _scriptsJs.scene).add(newModel);
     // Compute the bounding box to get size
@@ -783,6 +792,7 @@ function createLightInstance() {
         transparent: true,
         opacity: 0
     }));
+    modelDragBox.name = newModel.name;
     modelDragBox.position.copy(newModel.position);
     modelDragBox.userData.originalY = modelDragBox.position.y += size.y / 2;
     (0, _scriptsJs.scene).add(modelDragBox);

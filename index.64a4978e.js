@@ -601,6 +601,7 @@ parcelHelpers.export(exports, "indexMap", ()=>indexMap);
 parcelHelpers.export(exports, "setIndexMap", ()=>setIndexMap);
 parcelHelpers.export(exports, "getKeyByValue", ()=>getKeyByValue);
 parcelHelpers.export(exports, "updateIndexMap", ()=>updateIndexMap);
+parcelHelpers.export(exports, "lightBoundingBoxSize", ()=>lightBoundingBoxSize);
 parcelHelpers.export(exports, "cameraSequenceOptions", ()=>cameraSequenceOptions);
 parcelHelpers.export(exports, "selectedCameraSequence", ()=>selectedCameraSequence);
 // Function to add a new camera movement to cameraSequenceOptions
@@ -613,48 +614,8 @@ parcelHelpers.export(exports, "startCameraSequence", ()=>startCameraSequence);
 parcelHelpers.export(exports, "resetCameraSequence", ()=>resetCameraSequence);
 // Function to return current camera position and lookAt position
 parcelHelpers.export(exports, "getCameraDetails", ()=>getCameraDetails);
-// // GUI Control
-// var gui = new GUI();
-// // GUI Control
-// var gui = new GUI();
-// // Function to toggle GUI visibility
-// function toggleGUIVisibility() {
-//     gui.domElement.style.display = (gui.domElement.style.display === 'none' ? '' : 'none');
-// }
-// // Function to toggle GUI visibility
-// function toggleGUIVisibility() {
-//     gui.domElement.style.display = (gui.domElement.style.display === 'none' ? '' : 'none');
-// }
-// // Parameters of GUI
-// var params = {
-//     showCustomCameraHelper: false,
-// };
-// // Parameters of GUI
-// var params = {
-//     showCustomCameraHelper: false,
-// };
-// // Add a toggle in the GUI
-// gui.add(params, 'showCustomCameraHelper').name('Show Custom Camera').onChange(value => {
-//     customCameraHelper.visible = value;
-//     transformControls.visible = value;
-// });
 // Function to toggle visibility of the customCameraHelper and transformControl
 parcelHelpers.export(exports, "displayCustomCamera", ()=>displayCustomCamera);
-// // Add a toggle in the GUI
-// gui.add(params, 'showCustomCameraHelper').name('Show Custom Camera').onChange(value => {
-//     customCameraHelper.visible = value;
-//     transformControls.visible = value;
-// });
-// Function to toggle visibility of the customCameraHelper and transformControl
-// export function displayCustomCamera(isChecked) {
-//     if (isChecked) {
-//         customCameraHelper.visible = true;
-//         transformControls.visible = true;
-//     } else {
-//         customCameraHelper.visible = false;
-//         transformControls.visible = false;
-//     }
-// }
 // Function to clean window for video recording
 parcelHelpers.export(exports, "cleanView", ()=>cleanView);
 var _three = require("three");
@@ -774,6 +735,7 @@ const progressContainer = document.getElementById("progress-container");
 const progressElement = document.getElementById("progress");
 //load car model
 //let car;
+let carBoundingBox;
 rgbeLoader.load("./assets/MR_INT-001_NaturalStudio_NAD.hdr", function(texture) {
     // texture.mapping = THREE.EquirectangularReflectionMapping;
     // scene.environment = texture;
@@ -789,22 +751,22 @@ rgbeLoader.load("./assets/MR_INT-001_NaturalStudio_NAD.hdr", function(texture) {
         scene.add(modelGroup);
         progressContainer.style.display = "none";
         // Compute the bounding box to get size
-        const boundingBox = new _three.Box3().setFromObject(modelGroup);
+        carBoundingBox = new _three.Box3().setFromObject(modelGroup);
         const size = new _three.Vector3();
-        boundingBox.getSize(size);
+        carBoundingBox.getSize(size);
         // Create BoxGeometry based on the computed size
         const modelDragBox = new _three.Mesh(new _three.BoxGeometry(size.x, size.y, size.z), new _three.MeshBasicMaterial({
             transparent: true,
             opacity: 0
         }));
         modelDragBox.position.copy(modelGroup.position);
-        scene.add(modelDragBox);
+        // scene.add(modelDragBox);
         const boxHelper = new _three.BoxHelper(modelDragBox, 0xffff00);
         boxHelper.visible = false;
-        scene.add(boxHelper);
-        modelGroups.push(modelGroup);
-        modelDragBoxes.push(modelDragBox);
-        boxHelpers.push(boxHelper);
+    // scene.add(boxHelper);
+    // modelGroups.push(modelGroup)
+    // modelDragBoxes.push(modelDragBox);
+    // boxHelpers.push(boxHelper);
     }, (xhr)=>{
         // Update the loading progress
         console.log(`loading ${xhr.loaded / xhr.total * 100}%`);
@@ -814,8 +776,7 @@ rgbeLoader.load("./assets/MR_INT-001_NaturalStudio_NAD.hdr", function(texture) {
         console.log(error);
     });
 });
-// export let objects = {};
-// export var selectedObject = null;
+let lightBoundingBoxSize;
 // load studio light
 gltfLoader.load("./assets/studio_light/scene.gltf", function(gltf) {
     let modelGroup = new _three.Group();
@@ -838,12 +799,14 @@ gltfLoader.load("./assets/studio_light/scene.gltf", function(gltf) {
     // Compute the bounding box to get size
     const boundingBox = new _three.Box3().setFromObject(modelGroup);
     const size = new _three.Vector3();
+    lightBoundingBoxSize = size;
     boundingBox.getSize(size);
     // Create BoxGeometry based on the computed size
     const modelDragBox = new _three.Mesh(new _three.BoxGeometry(size.x, size.y, size.z), new _three.MeshBasicMaterial({
         transparent: true,
         opacity: 0
     }));
+    modelDragBox.name = modelGroup.name;
     modelDragBox.position.copy(modelGroup.position);
     modelDragBox.userData.originalY = modelDragBox.position.y += size.y / 2;
     scene.add(modelDragBox);
@@ -858,37 +821,6 @@ gltfLoader.load("./assets/studio_light/scene.gltf", function(gltf) {
 }, function(error) {
     console.log(error);
 });
-// Original code to load studio light ---------------------------
-// let light;
-// gltfLoader.load('./assets/studio_light/scene.gltf', function(gltf) {
-//     const model = gltf.scene;
-//     model.name = "studioLight";
-//     model.traverse(function (child) {
-//         if (child.isMesh) {
-//             if (child.name == 'Object_7') {
-//                 var material = child.material;
-//                 material.emissive.set(new THREE.Color(0xffffff));
-//                 material.needsUpdate = true;
-//                 const pointLight = new THREE.PointLight( new THREE.Color(0xffffff), 3 );
-//                 child.add( pointLight );
-//                 pointLight.name = pointLight;
-//                 }				
-//         }
-//         });
-//     model.position.set(0,0,-5);
-//     model.scale.set(0.3,0.15,0.2);
-//     scene.add(model);
-//     const box = new THREE.Box3().setFromObject(model);
-//     const helper = new THREE.Box3Helper(box, 0xffff00);
-//     helper.visible = false;
-//     scene.add(helper);
-//     objects[model.name] = {
-//     model: model,
-//     box: box,
-//     helper: helper
-//     };
-// });
-// --------------------------------------------------------------
 // top light
 gltfLoader.load("./assets/top_light/scene.gltf", function(gltf) {
     let modelGroup = new _three.Group();
@@ -932,68 +864,101 @@ gltfLoader.load("./assets/top_light/scene.gltf", function(gltf) {
 }, function(error) {
     console.log(error);
 });
-// Original code to load top light ---------------------------
-// let topLight;
-//     gltfLoader.load('./assets/top_light/scene.gltf', function(gltf) {
-//         const model = gltf.scene;
-// 		model.name = "topLight";
-//         model.traverse(function (child) {
-//             if (child.isMesh) {
-//                 if (child.name == 'L1_L1_BODY_0') {
-//                     const directionalLight = new THREE.DirectionalLight( new THREE.Color(255,218,185), 0.001);
-// 					// spotLight.decay = 2;
-//                     // spotLight.angle = Math.PI/6;
-// 					// spotLight.penumbra = 1;
-//                     child.add( directionalLight );
-//                     directionalLight.name = directionalLight;
-//                   }
-//             child.castShadow = true;
-//             }
-//           });
-// 		model.position.set(-0.3,3.6,-0.5);
-//         model.scale.set(3,1.5,5);
-// 		model.rotation.set(0,90 * Math.PI / 180,0);
-// 		scene.add(model);
-// 		const box = new THREE.Box3().setFromObject(model);
-// 		const helper = new THREE.Box3Helper(box, 0xffff00);
-// 		helper.visible = false;
-// 		scene.add(helper);
-// 		objects[model.name] = {
-// 		model: model,
-// 		box: box,
-// 		helper: helper
-// 		};
-//     });
-// --------------------------------------------------------------
 // Function to update bounding box for collision detection
 function updateBoundingBox(boxHelper, modelDragBox) {
     modelDragBox.geometry.computeBoundingBox();
     modelDragBox.updateMatrixWorld();
     boxHelper.update();
 }
-// Function to check collision between objects
+// // Function to check collision between objects
+// function checkCollision(currentIndex) {
+//     const currentBox = modelDragBoxes[currentIndex].geometry.boundingBox.clone();
+//     currentBox.applyMatrix4(modelDragBoxes[currentIndex].matrixWorld);
+//     for (let i = 0; i < modelDragBoxes.length; i++) {
+//         if (i !== currentIndex) {
+//             const otherBox = modelDragBoxes[i].geometry.boundingBox.clone();
+//             otherBox.applyMatrix4(modelDragBoxes[i].matrixWorld);
+//             // Compute the sizes of both bounding boxes
+//             const currentBoxSize = new THREE.Vector3();
+//             const otherBoxSize = new THREE.Vector3();
+//             currentBox.getSize(currentBoxSize);
+//             otherBox.getSize(otherBoxSize);
+//             // Check for intersection if sizes are different
+//             if (currentBox.intersectsBox(otherBox)) {
+//                 //console.log(`Collision detected between model ${currentIndex} and model ${i}`);
+//                 return true;
+//             }
+//         }
+//     }
+//     return false;
+// }
+// Function to check collision between an object and a specific bounding box
 function checkCollision(currentIndex) {
     const currentBox = modelDragBoxes[currentIndex].geometry.boundingBox.clone();
     currentBox.applyMatrix4(modelDragBoxes[currentIndex].matrixWorld);
-    for(let i = 0; i < modelDragBoxes.length; i++)if (i !== currentIndex) {
-        const otherBox = modelDragBoxes[i].geometry.boundingBox.clone();
-        otherBox.applyMatrix4(modelDragBoxes[i].matrixWorld);
-        if (currentBox.intersectsBox(otherBox)) //console.log(`Collision detected between model ${currentIndex} and model ${i}`);
-        return true;
-    }
+    // Compute the size of the current bounding box
+    const currentBoxSize = new _three.Vector3();
+    currentBox.getSize(currentBoxSize);
+    // Check for intersection with the specific carBoundingBox
+    if (currentBox.intersectsBox(carBoundingBox)) //console.log(`Collision detected between model ${currentIndex} and car`);
+    return true;
     return false;
 }
 // Define Dragcontrol actions
 const dragControls = new (0, _dragControlsJs.DragControls)(draggableObjects, camera, renderer.domElement);
+// dragControls.addEventListener('hoveron', function (event) {
+//         const index = indexMap.get(draggableObjects.indexOf(event.object));
+//         console.log(event.object.name);
+//         boxHelpers[index].visible = true;
+//         orbitControls.enabled = false;
+// });
+// dragControls.addEventListener('hoveroff', function (event) {
+//         const index = indexMap.get(draggableObjects.indexOf(event.object));
+//         boxHelpers[index].visible = false;
+//         orbitControls.enabled = true;
+// });
+// Create a map to store the text sprites for each object
+const textSprites = new Map();
+// Function to create a text sprite
+function createTextSprite(text) {
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    const fontSize = 48;
+    context.font = `${fontSize}px Arial`;
+    context.fillStyle = "rgba(255, 255, 255, 1.0)";
+    context.fillText(text, 0, fontSize);
+    const texture = new _three.CanvasTexture(canvas);
+    const material = new _three.SpriteMaterial({
+        map: texture
+    });
+    const sprite = new _three.Sprite(material);
+    return sprite;
+}
 dragControls.addEventListener("hoveron", function(event) {
     const index = indexMap.get(draggableObjects.indexOf(event.object));
     boxHelpers[index].visible = true;
     orbitControls.enabled = false;
+    // Create or retrieve the text sprite
+    let textSprite = textSprites.get(event.object);
+    if (!textSprite) {
+        textSprite = createTextSprite(event.object.name);
+        scene.add(textSprite);
+        textSprites.set(event.object, textSprite);
+    }
+    // Position the text sprite near the bounding box
+    const boundingBox = new _three.Box3().setFromObject(event.object);
+    const center = new _three.Vector3();
+    boundingBox.getCenter(center);
+    textSprite.position.set(center.x, boundingBox.max.y + 0.5, center.z); // Adjust the y-offset as needed
+    textSprite.visible = true;
 });
 dragControls.addEventListener("hoveroff", function(event) {
     const index = indexMap.get(draggableObjects.indexOf(event.object));
     boxHelpers[index].visible = false;
     orbitControls.enabled = true;
+    // Hide the text sprite
+    const textSprite = textSprites.get(event.object);
+    if (textSprite) textSprite.visible = false;
 });
 dragControls.addEventListener("dragstart", function(event) {
     const index = selectedIndex = indexMap.get(draggableObjects.indexOf(event.object));
@@ -1037,7 +1002,7 @@ dragControls.addEventListener("dragend", function(event) {
 document.addEventListener("keydown", onDocumentKeyDown);
 function onDocumentKeyDown(event) {
     // Implementation of key down interactions
-    if (selectedIndex !== null && modelGroups[selectedIndex].name !== "car") switch(event.key){
+    if (selectedIndex !== null) switch(event.key){
         case "ArrowRight":
             moveObject(selectedIndex, "right");
             break;
@@ -1142,7 +1107,8 @@ const cameraSequenceOptions = [
         startLookAtPosition: new (0, _three.Vector3)(0.00, -8.5, -93.52),
         endCameraPosition: new (0, _three.Vector3)(0.00, 1.00, 3.41),
         endLookAtPosition: new (0, _three.Vector3)(0.00, -8.5, -93.52),
-        duration: 10.0
+        duration: 5.0,
+        ease: "power2.in"
     },
     {
         id: 2,
@@ -1151,7 +1117,8 @@ const cameraSequenceOptions = [
         startLookAtPosition: new (0, _three.Vector3)(0.10, -11, -96.25),
         endCameraPosition: new (0, _three.Vector3)(0.00, 1.00, 3.00),
         endLookAtPosition: new (0, _three.Vector3)(-0.95, -27.95, -92.66),
-        duration: 7.0
+        duration: 3.5,
+        ease: "none"
     },
     {
         id: 3,
@@ -1160,7 +1127,8 @@ const cameraSequenceOptions = [
         startLookAtPosition: new (0, _three.Vector3)(-12, -32.25, 91.15),
         endCameraPosition: new (0, _three.Vector3)(-0.35, 0.87, -2.45),
         endLookAtPosition: new (0, _three.Vector3)(12.00, -32.25, 91.15),
-        duration: 7.0
+        duration: 3.5,
+        ease: "none"
     },
     {
         id: 4,
@@ -1169,7 +1137,8 @@ const cameraSequenceOptions = [
         startLookAtPosition: new (0, _three.Vector3)(40.26, -26.14, -84.17),
         endCameraPosition: new (0, _three.Vector3)(-1.34, 0.86, 0.14),
         endLookAtPosition: new (0, _three.Vector3)(40.26, -26.14, -84.17),
-        duration: 7.0
+        duration: 3.5,
+        ease: "back.inOut"
     },
     {
         id: 5,
@@ -1178,7 +1147,8 @@ const cameraSequenceOptions = [
         startLookAtPosition: new (0, _three.Vector3)(-0.01, -30.01, -93.07),
         endCameraPosition: new (0, _three.Vector3)(-0.02, 0.60, 2.10),
         endLookAtPosition: new (0, _three.Vector3)(-0.01, -30.01, -93.07),
-        duration: 7.0
+        duration: 3.5,
+        ease: "none"
     },
     {
         id: 6,
@@ -1187,11 +1157,12 @@ const cameraSequenceOptions = [
         startLookAtPosition: new (0, _three.Vector3)(19.70, -76.58, -53.76),
         endCameraPosition: new (0, _three.Vector3)(-0.9, 3.50, -2.5),
         endLookAtPosition: new (0, _three.Vector3)(19.70, -76.58, 53.76),
-        duration: 15.0
+        duration: 5,
+        ease: "circ.inOut"
     }
 ];
 let selectedCameraSequence = [];
-function createCameraMovement(name, positions, duration) {
+function createCameraMovement(name, positions, duration, ease) {
     const { startPosition, startLookAt, endPosition, endLookAt } = positions;
     const newCameraMovement = {
         id: cameraSequenceOptions.length + 1,
@@ -1200,7 +1171,8 @@ function createCameraMovement(name, positions, duration) {
         startLookAtPosition: new (0, _three.Vector3)(startLookAt.x, startLookAt.y, startLookAt.z),
         endCameraPosition: new (0, _three.Vector3)(endPosition.x, endPosition.y, endPosition.z),
         endLookAtPosition: new (0, _three.Vector3)(endLookAt.x, endLookAt.y, endLookAt.z),
-        duration
+        duration,
+        ease
     };
     cameraSequenceOptions.push(newCameraMovement);
     console.log("Camera movement created:", newCameraMovement);
@@ -1244,14 +1216,15 @@ function startCameraSequence() {
             y: sequence.endCameraPosition.y,
             z: sequence.endCameraPosition.z,
             duration: sequence.duration,
-            ease: "none"
+            ease: sequence.ease
         });
         // Animate camera's direction by interpolating between startLookAtPosition and endLookAtPosition
         tl.to({}, {
             duration: sequence.duration,
-            ease: "none",
+            //ease: sequence.ease,
             onUpdate: function() {
-                const progress = this.progress();
+                const rawProgress = this.progress();
+                const progress = (0, _gsap.gsap).parseEase(sequence.ease)(rawProgress);
                 const directionX = (0, _gsap.gsap).utils.interpolate(sequence.startLookAtPosition.x, sequence.endLookAtPosition.x, progress);
                 const directionY = (0, _gsap.gsap).utils.interpolate(sequence.startLookAtPosition.y, sequence.endLookAtPosition.y, progress);
                 const directionZ = (0, _gsap.gsap).utils.interpolate(sequence.startLookAtPosition.z, sequence.endLookAtPosition.z, progress);
@@ -1309,11 +1282,16 @@ function displayCustomCamera(isChecked) {
 function cleanView() {
     customCameraHelper.visible = false;
     transformControls.visible = false;
+    dragControls.enabled = false;
+    boxHelpers.forEach((boxHelper)=>{
+        boxHelper.visible = false;
+    });
 }
 // Function to reset window after video recording
 function resetView() {
     customCameraHelper.visible = true;
     transformControls.visible = true;
+    dragControls.enabled = true;
     animate();
 }
 
