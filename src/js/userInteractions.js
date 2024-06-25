@@ -133,6 +133,8 @@ document.getElementById('createCameraMovement').addEventListener('click', functi
 
     if (cameraSequenceOptions.some(option => option.name == name)) {
         alert(name + ' already exists. Please enter different name.')
+    } else if (name == "" || isNaN(duration)){
+        alert('Name/Duration is blank. Please enter name/duration.')
     } else {
         // Call the function to add a new camera movement
         createCameraMovement(name, positions, duration, ease);
